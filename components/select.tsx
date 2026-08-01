@@ -153,7 +153,7 @@ export function Select({
               </div>
             ) : null}
           </div>
-        }}
+        )}
       />
     </div>
   );
