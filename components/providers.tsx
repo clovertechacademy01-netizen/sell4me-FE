@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { Provider } from "react-redux";
 import { Toaster } from "sonner";
+import { ConfirmDialogHost } from "@/components/confirm-dialog";
 import { makeStore, type AppStore } from "@/store";
 import { StoreHydrator } from "@/store/hydrator";
 
@@ -16,6 +17,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     <Provider store={storeRef.current}>
       <StoreHydrator />
       {children}
+      <ConfirmDialogHost />
       <Toaster
         position="top-right"
         toastOptions={{

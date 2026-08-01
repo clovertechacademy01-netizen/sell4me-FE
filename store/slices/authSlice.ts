@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import {
   clearAuthStorage,
+  clearAuthCookies,
   getAccessToken,
   getStoredUser,
   setAccessToken,
@@ -38,6 +39,9 @@ const authSlice = createSlice({
       if (action.payload.token) {
         state.token = action.payload.token;
         setAccessToken(action.payload.token);
+      } else {
+        state.token = null;
+        setAccessToken(null);
       }
       setStoredUser(action.payload.user);
     },
@@ -45,6 +49,7 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       clearAuthStorage();
+      void clearAuthCookies();
     },
   },
   extraReducers: (builder) => {
@@ -53,9 +58,14 @@ const authSlice = createSlice({
         sell4meApi.endpoints.login.matchFulfilled,
         (state, action) => {
           state.user = action.payload.user;
+          // Cookie-first: only keep a local Bearer token when the API returns one
+          // (e.g. NEXT_PUBLIC_INCLUDE_AUTH_TOKENS=true for local debugging).
           if (action.payload.access_token) {
             state.token = action.payload.access_token;
             setAccessToken(action.payload.access_token);
+          } else {
+            state.token = null;
+            setAccessToken(null);
           }
           setStoredUser(action.payload.user);
           state.hydrated = true;
@@ -69,6 +79,7 @@ const authSlice = createSlice({
         state.user = null;
         state.token = null;
         clearAuthStorage();
+        void clearAuthCookies();
       });
   },
 });

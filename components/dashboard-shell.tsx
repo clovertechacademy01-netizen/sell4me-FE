@@ -113,13 +113,18 @@ export function DashboardShell({
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { user, hydrated } = useAppSelector((s) => s.auth);
-  const [triggerMe] = useLazyMeQuery();
+  const [triggerMe, meQuery] = useLazyMeQuery();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { data: unreadData } = useUnreadNotificationCountQuery(undefined, {
     skip: !user || (user.role !== "merchant" && user.role !== "admin"),
     pollingInterval: 30000,
   });
   const unread = unreadData?.unread_count || 0;
+  const authChecking =
+    !hydrated ||
+    meQuery.isUninitialized ||
+    meQuery.isLoading ||
+    meQuery.isFetching;
 
   useEffect(() => {
     dispatch(hydrateAuth());
@@ -131,6 +136,11 @@ export function DashboardShell({
 
   useEffect(() => {
     if (!hydrated) return;
+    void triggerMe();
+  }, [hydrated, triggerMe]);
+
+  useEffect(() => {
+    if (authChecking) return;
     if (!user) {
       router.replace(`/auth/login?next=${encodeURIComponent(pathname)}`);
       return;
@@ -147,15 +157,9 @@ export function DashboardShell({
     if (user.role !== expected && user.role !== "admin") {
       router.replace(user.role === "partner" ? "/partner" : "/merchant");
     }
-  }, [hydrated, user, pathname, router]);
+  }, [authChecking, user, pathname, router]);
 
-  useEffect(() => {
-    if (hydrated && user) {
-      void triggerMe();
-    }
-  }, [hydrated, user?.id, triggerMe]);
-
-  if (!hydrated || !user) {
+  if (authChecking || !user) {
     return <HeartbeatLoader label="Preparing your dashboard…" />;
   }
 

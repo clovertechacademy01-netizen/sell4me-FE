@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DashboardShell } from "@/components/dashboard-shell";
 import { ImageUploadField } from "@/components/image-upload-field";
+import { confirmAction } from "@/components/confirm-dialog";
 import { Button, Field, Input, Textarea } from "@/components/ui";
 import { getErrorMessage } from "@/lib/axios";
 import type { Store } from "@/lib/types";
@@ -89,7 +90,15 @@ export default function MerchantStorePage() {
               variant="danger"
               disabled={loading}
               onClick={async () => {
-                if (!confirm("Delete this store and all its products?")) return;
+                const confirmed = await confirmAction({
+                  title: "Delete this store?",
+                  description:
+                    "This deletes the store and all of its products. This action cannot be undone.",
+                  confirmLabel: "Delete store",
+                  cancelLabel: "Keep store",
+                  tone: "danger",
+                });
+                if (!confirmed) return;
                 try {
                   await deleteStore(store.id).unwrap();
                   setStore(null);

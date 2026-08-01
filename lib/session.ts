@@ -39,6 +39,7 @@ export function peekAffiliateCode(): string | null {
   return localStorage.getItem(AFFILIATE_KEY);
 }
 
+/** Optional Bearer fallback token. Cookie auth is primary. */
 export function getAccessToken(): string | null {
   if (!canUseStorage()) return null;
   return localStorage.getItem(TOKEN_KEY);
@@ -70,4 +71,22 @@ export function setStoredUser(user: unknown | null) {
 export function clearAuthStorage() {
   setAccessToken(null);
   setStoredUser(null);
+}
+
+/** Clears httpOnly auth cookies on the frontend origin. */
+export async function clearAuthCookies() {
+  if (!canUseStorage()) return;
+  try {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch {
+    // Ignore — local session is cleared regardless.
+  }
+}
+
+export async function clearAuthSession() {
+  clearAuthStorage();
+  await clearAuthCookies();
 }

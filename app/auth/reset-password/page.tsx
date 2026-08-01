@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/auth-shell";
+import { PasswordInput } from "@/components/password-input";
 import { Button, Field, Input, Spinner } from "@/components/ui";
 import { getErrorMessage } from "@/lib/axios";
 import { useResetPasswordMutation } from "@/store/api/sell4meApi";
@@ -58,9 +59,9 @@ function ResetInner() {
           />
         </Field>
         <Field label="New password">
-          <Input
-            type="password"
+          <PasswordInput
             required
+            autoComplete="new-password"
             value={form.new_password}
             onChange={(e) =>
               setForm({ ...form, new_password: e.target.value })

@@ -18,7 +18,7 @@ import {
 type ProductDraft = {
   id: string;
   name: string;
-  category: string;
+  category_id: string;
   unit: string;
   quantity: string;
   price: string;
@@ -32,7 +32,7 @@ function createEmptyProductDraft(): ProductDraft {
   return {
     id: crypto.randomUUID(),
     name: "",
-    category: "",
+    category_id: "",
     unit: "piece",
     quantity: "1",
     price: "",
@@ -95,7 +95,7 @@ export default function NewProductPage() {
 
                 return {
                   name: product.name,
-                  category: product.category,
+                  category_id: product.category_id,
                   unit: product.unit,
                   quantity: Number(product.quantity),
                   price: Number(product.price),
@@ -135,7 +135,7 @@ export default function NewProductPage() {
 
         {products.map((product, index) => {
           const selectedCategory = categories?.items?.find(
-            (category) => category.id === product.category,
+            (category) => category.id === product.category_id,
           );
 
           return (
@@ -185,11 +185,11 @@ export default function NewProductPage() {
                     <Select
                       required
                       placeholder="Select category"
-                      value={product.category}
+                      value={product.category_id}
                       onChange={(e) =>
                         updateProduct(product.id, (current) => ({
                           ...current,
-                          category: e.target.value,
+                          category_id: e.target.value,
                         }))
                       }
                       options={(categories?.items || []).map((category) => ({

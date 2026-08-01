@@ -5,11 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/auth-shell";
+import { PasswordInput } from "@/components/password-input";
+import { Select } from "@/components/select";
 import { Button, Field, Input, Spinner } from "@/components/ui";
 import { getErrorMessage } from "@/lib/axios";
 import { NIGERIAN_STATES } from "@/lib/utils";
 import { useRegisterMutation } from "@/store/api/sell4meApi";
-import { Select } from "@/components/select";
 
 function RegisterInner() {
   const router = useRouter();
@@ -109,9 +110,9 @@ function RegisterInner() {
             label="Password"
             hint="8–15 chars with upper, lower, number, and special @$!%*?&"
           >
-            <Input
-              type="password"
+            <PasswordInput
               required
+              autoComplete="new-password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
             />

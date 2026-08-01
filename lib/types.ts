@@ -70,6 +70,9 @@ export interface Product {
   merchant_id: string;
   name: string;
   quantity: number;
+  /** System category ID (e.g. fashion-apparel) */
+  category_id: string;
+  /** Resolved display name from category_id */
   category: string;
   unit: string;
   price: number;

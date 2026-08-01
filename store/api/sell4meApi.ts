@@ -72,7 +72,10 @@ export const sell4meApi = createApi({
         method: "POST",
         data: body,
         auth: false,
-        headers: { "x-include-tokens": "true" },
+        // Cookie-first auth. Opt into body tokens only for local/debug clients.
+        ...(process.env.NEXT_PUBLIC_INCLUDE_AUTH_TOKENS === "true"
+          ? { headers: { "x-include-tokens": "true" } }
+          : {}),
       }),
       invalidatesTags: ["Auth", "Store", "Product", "Order", "Wallet", "Notification"],
     }),

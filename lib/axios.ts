@@ -6,6 +6,9 @@ import {
   getGuestSessionId,
 } from "@/lib/session";
 
+// Browser calls same-origin `/backend/...`; Next rewrites that to `API_URL`.
+// Do NOT use NEXT_PUBLIC_APP_URL here — that is the frontend origin and would
+// make requests hit e.g. sell4me-fe.vercel.app/api/... instead of the API.
 const API_BASE =
   process.env.NEXT_PUBLIC_API_PROXY?.replace(/\/+$/, "") || "/backend";
 
@@ -22,6 +25,7 @@ axiosInstance.interceptors.request.use((config) => {
   if (skipAuth) {
     delete config.headers["x-skip-auth"];
   } else {
+    // Prefer httpOnly cookies (sent via withCredentials). Bearer is fallback only.
     const token = getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -41,6 +45,12 @@ axiosInstance.interceptors.response.use(
   (error: AxiosError) => {
     if (error.response?.status === 401) {
       clearAuthStorage();
+      if (typeof window !== "undefined") {
+        void fetch("/api/auth/logout", {
+          method: "POST",
+          credentials: "include",
+        });
+      }
     }
     return Promise.reject(error);
   },

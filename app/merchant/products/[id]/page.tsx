@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DashboardShell } from "@/components/dashboard-shell";
 import { ImageUploadField } from "@/components/image-upload-field";
+import { confirmAction } from "@/components/confirm-dialog";
 import { Button, Field, Input, Spinner, Textarea } from "@/components/ui";
 import { Select } from "@/components/select";
 import { getErrorMessage } from "@/lib/axios";
@@ -36,7 +37,7 @@ export default function EditProductPage() {
   const [specsText, setSpecsText] = useState("");
   const [form, setForm] = useState({
     name: "",
-    category: "",
+    category_id: "",
     unit: "",
     quantity: "",
     price: "",
@@ -44,15 +45,19 @@ export default function EditProductPage() {
     image: "",
   });
   const selectedCategory = categories?.items?.find(
-    (category) => category.id === form.category,
+    (category) => category.id === form.category_id,
   );
 
   useEffect(() => {
     if (!data?.product) return;
     const p = data.product;
+    const resolvedCategoryId =
+      p.category_id ||
+      categories?.items?.find((category) => category.name === p.category)?.id ||
+      "";
     setForm({
       name: p.name,
-      category: p.category,
+      category_id: resolvedCategoryId,
       unit: p.unit,
       quantity: String(p.quantity),
       price: String(p.price),
@@ -67,7 +72,7 @@ export default function EditProductPage() {
         : "",
     );
     setReady(true);
-  }, [data]);
+  }, [data, categories]);
 
   useEffect(() => {
     if (error) toast.error(getErrorMessage(error, "Failed to load"));
@@ -129,7 +134,7 @@ export default function EditProductPage() {
               id: params.id,
               body: {
                 name: form.name,
-                category: form.category,
+                category_id: form.category_id,
                 unit: form.unit,
                 quantity: Number(form.quantity),
                 price: Number(form.price),
@@ -157,8 +162,8 @@ export default function EditProductPage() {
             <Select
               required
               placeholder="Select category"
-              value={form.category}
-              onChange={(e) => setForm({ ...form, category: e.target.value })}
+              value={form.category_id}
+              onChange={(e) => setForm({ ...form, category_id: e.target.value })}
               options={(categories?.items || []).map((category) => ({
                 value: category.id,
                 label: category.name,
@@ -239,7 +244,15 @@ export default function EditProductPage() {
             type="button"
             variant="danger"
             onClick={async () => {
-              if (!confirm("Delete this product?")) return;
+              const confirmed = await confirmAction({
+                title: "Delete this product?",
+                description:
+                  "This permanently removes the product from your storefront. This action cannot be undone.",
+                confirmLabel: "Delete product",
+                cancelLabel: "Keep product",
+                tone: "danger",
+              });
+              if (!confirmed) return;
               try {
                 await deleteProduct(params.id).unwrap();
                 toast.success("Deleted");

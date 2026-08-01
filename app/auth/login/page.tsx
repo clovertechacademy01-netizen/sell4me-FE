@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/auth-shell";
+import { PasswordInput } from "@/components/password-input";
 import { Button, Field, Input, Spinner } from "@/components/ui";
 import { getErrorMessage } from "@/lib/axios";
 import { useLoginMutation } from "@/store/api/sell4meApi";
@@ -58,8 +59,7 @@ function LoginInner() {
           />
         </Field>
         <Field label="Password">
-          <Input
-            type="password"
+          <PasswordInput
             required
             autoComplete="current-password"
             value={form.password}
