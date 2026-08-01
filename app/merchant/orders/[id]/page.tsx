@@ -110,7 +110,25 @@ export default function MerchantOrderDetailPage() {
         <div className="space-y-4">
           <div className="surface-card p-5 text-sm">
             <h3 className="font-semibold">Delivery</h3>
-            <p className="mt-3 text-muted">{order.recipient_address}</p>
+            <p className="mt-3 font-medium">
+              {order.delivery_method === "locker"
+                ? "Locker pickup"
+                : "Direct delivery"}
+            </p>
+            {order.delivery_method === "locker" ? (
+              <>
+                <p className="mt-3 text-muted">
+                  {order.locker_address || order.recipient_address || "—"}
+                </p>
+                {order.locker_id ? (
+                  <p className="mt-1 text-xs text-muted">
+                    Locker ID · {order.locker_id}
+                  </p>
+                ) : null}
+              </>
+            ) : (
+              <p className="mt-3 text-muted">{order.recipient_address}</p>
+            )}
             <p className="mt-1">
               {order.city ? `${order.city}, ` : ""}
               {order.recipient_state}
@@ -122,7 +140,9 @@ export default function MerchantOrderDetailPage() {
               </p>
             ) : null}
             {order.fez_order_no ? (
-              <p className="mt-2 text-xs text-muted">Fez order {order.fez_order_no}</p>
+              <p className="mt-2 text-xs text-muted">
+                Fez order {order.fez_order_no}
+              </p>
             ) : null}
             {fezTracking ? (
               <pre className="mt-4 overflow-x-auto rounded-xl bg-surface-soft p-3 text-[11px] text-muted">
@@ -136,15 +156,15 @@ export default function MerchantOrderDetailPage() {
               <span>{formatNaira(order.subtotal)}</span>
             </div>
             <div className="mt-2 flex justify-between">
-              <span className="text-muted">Commission</span>
-              <span>{formatNaira(order.total_commission)}</span>
+              <span className="text-muted">Partner share</span>
+              <span>{formatNaira(order.total_commission || 0)}</span>
             </div>
             <div className="mt-2 flex justify-between">
               <span className="text-muted">Delivery</span>
               <span>{formatNaira(order.delivery_fee || 0)}</span>
             </div>
             <div className="mt-3 flex justify-between border-t border-border pt-3 font-semibold">
-              <span>Total</span>
+              <span>Customer total</span>
               <span className="text-brand">
                 {formatNaira(order.total + (order.delivery_fee || 0))}
               </span>

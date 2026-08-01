@@ -9,7 +9,7 @@ import { DashboardShell } from "@/components/dashboard-shell";
 import { EmptyState, Spinner } from "@/components/ui";
 import { getErrorMessage } from "@/lib/axios";
 import type { AffiliateLink, Product, Store } from "@/lib/types";
-import { cn, customerUnitPrice, formatNaira } from "@/lib/utils";
+import { cn, formatNaira, partnerEarning } from "@/lib/utils";
 import {
   useCreateAffiliateLinkMutation,
   useListAffiliateLinksQuery,
@@ -164,7 +164,8 @@ function ProductPromoCard({
   product: Product;
   existing?: AffiliateLink;
 }) {
-  const price = customerUnitPrice(product.price, product.commission);
+  const price = Number(product.price || 0);
+  const earn = partnerEarning(price, product.commission || 0);
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-white transition hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(10,42,107,0.08)]">
@@ -193,7 +194,10 @@ function ProductPromoCard({
               {product.name}
             </h3>
             <p className="mt-0.5 truncate text-[11px] text-muted">
-              {product.category} · {product.commission}% commission
+              {product.category}
+              {product.commission != null
+                ? ` · ${product.commission}% commission`
+                : ""}
             </p>
           </Link>
           <AffiliateActionButton
@@ -202,9 +206,16 @@ function ProductPromoCard({
             existing={existing}
           />
         </div>
-        <p className="mt-auto display-font text-base font-semibold tracking-tight">
-          {formatNaira(price)}
-        </p>
+        <div className="mt-auto">
+          <p className="display-font text-base font-semibold tracking-tight">
+            {formatNaira(price)}
+          </p>
+          {product.commission != null ? (
+            <p className="text-[11px] text-muted">
+              You earn ~{formatNaira(earn)} per sale
+            </p>
+          ) : null}
+        </div>
       </div>
     </article>
   );

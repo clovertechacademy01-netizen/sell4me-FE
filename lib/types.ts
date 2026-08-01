@@ -100,8 +100,11 @@ export interface Product {
   category: string;
   unit: string;
   price: number;
-  /** Partner commission percentage 0–100 */
-  commission: number;
+  /**
+   * Partner commission percentage 0–100.
+   * Omitted on public/customer catalog payloads — never added to customer price.
+   */
+  commission?: number;
   image?: string;
   specifications?: Record<string, string>;
   status: StoreStatus;
@@ -120,12 +123,14 @@ export interface CartItem {
   name: string;
   unit: string;
   price: number;
-  commission: number;
+  /** Omitted on customer cart responses */
+  commission?: number;
   image?: string;
   specifications?: Record<string, string>;
   quantity: number;
   line_total: number;
-  line_commission: number;
+  /** Omitted on customer cart responses */
+  line_commission?: number;
 }
 
 export interface Cart {
@@ -136,7 +141,8 @@ export interface Cart {
   affiliate_link_id?: string;
   items: CartItem[];
   subtotal: number;
-  total_commission: number;
+  /** Omitted on customer cart responses — total equals subtotal for customers */
+  total_commission?: number;
   total: number;
 }
 
@@ -162,7 +168,8 @@ export interface OrderItem {
   name: string;
   unit: string;
   price: number;
-  commission: number;
+  /** Present for merchant/partner; omitted for customer-facing payloads */
+  commission?: number;
   quantity: number;
   line_total: number;
   image?: string;
@@ -176,14 +183,15 @@ export interface Order {
   store_name: string;
   items: OrderItem[];
   subtotal: number;
-  total_commission: number;
+  /** Partner share — merchant/partner APIs only */
+  total_commission?: number;
   total: number;
   status: OrderStatus;
   payment_status: PaymentStatus;
   payment_tx_ref?: string;
   delivery_fee?: number;
   fez_base_delivery_cost?: number;
-  delivery_method?: "home" | "locker";
+  delivery_method?: DeliveryMethod;
   locker_id?: string;
   locker_address?: string;
   recipient_phone?: string;
@@ -267,6 +275,9 @@ export interface TrackingOrder {
   status: OrderStatus;
   payment_status: PaymentStatus;
   delivery_status?: string;
+  delivery_method?: DeliveryMethod;
+  locker_id?: string;
+  locker_address?: string;
   fez_order_no?: string;
   waybill_number?: string;
   recipient_state?: string;

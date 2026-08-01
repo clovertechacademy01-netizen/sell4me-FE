@@ -81,7 +81,7 @@ export default function CheckoutPage() {
     const map = new Map<string, number>();
     cart?.items.forEach((item) => {
       const current = map.get(item.store_id) || 0;
-      map.set(item.store_id, current + item.line_total + item.line_commission);
+      map.set(item.store_id, current + Number(item.line_total || 0));
     });
     return Array.from(map.entries());
   }, [cart]);

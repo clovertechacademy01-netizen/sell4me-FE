@@ -14,25 +14,32 @@ export function formatNaira(amount: number | undefined | null) {
   }).format(value);
 }
 
-export function customerUnitPrice(price: number, commissionPercent: number) {
+/** Customer pays the listed product price only — commission is not added. */
+export function customerUnitPrice(price: number, _commissionPercent?: number) {
+  return Number(Number(price || 0).toFixed(2));
+}
+
+/** Partner earnings estimate from a product's commission % (not a customer surcharge). */
+export function partnerEarning(
+  price: number,
+  commissionPercent: number,
+  quantity = 1,
+) {
   return Number(
-    (Number(price) + (Number(price) * Number(commissionPercent)) / 100).toFixed(
-      2,
-    ),
+    (
+      ((Number(price) * Number(commissionPercent || 0)) / 100) *
+      Number(quantity)
+    ).toFixed(2),
   );
 }
 
+/** @deprecated Use partnerEarning — commission is not charged to customers. */
 export function lineCommission(
   price: number,
   commissionPercent: number,
   quantity: number,
 ) {
-  return Number(
-    (
-      ((Number(price) * Number(commissionPercent)) / 100) *
-      Number(quantity)
-    ).toFixed(2),
-  );
+  return partnerEarning(price, commissionPercent, quantity);
 }
 
 export const NIGERIAN_STATES = [

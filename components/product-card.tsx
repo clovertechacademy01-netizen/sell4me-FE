@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/axios";
 import { peekAffiliateCode } from "@/lib/session";
 import type { Product } from "@/lib/types";
-import { cn, customerUnitPrice, formatNaira } from "@/lib/utils";
+import { cn, formatNaira } from "@/lib/utils";
 import { useAddCartItemsMutation, useClearCartMutation } from "@/store/api/sell4meApi";
 
 export function ProductCard({
@@ -22,7 +22,7 @@ export function ProductCard({
   const [addCartItems, { isLoading: adding }] = useAddCartItemsMutation();
   const [clearCart, { isLoading: clearing }] = useClearCartMutation();
   const isLoading = adding || clearing;
-  const total = customerUnitPrice(product.price, product.commission);
+  const total = Number(product.price || 0);
   const outOfStock = product.quantity <= 0;
 
   const addItem = async (quantity = 1) => {

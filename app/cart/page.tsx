@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { FadeIn } from "@/components/motion";
 import { Button, EmptyState, Spinner } from "@/components/ui";
 import { getErrorMessage } from "@/lib/axios";
-import { customerUnitPrice, formatNaira } from "@/lib/utils";
+import { formatNaira } from "@/lib/utils";
 import {
   useGetCartQuery,
   useRemoveCartItemMutation,
@@ -69,99 +69,93 @@ export default function CartPage() {
         </div>
 
         {groups.map(([storeId, items]) => (
-          <div
-            key={storeId}
-            className="surface-card overflow-hidden"
-          >
+          <div key={storeId} className="surface-card overflow-hidden">
             <div className="border-b border-border bg-surface-soft px-5 py-3 text-sm font-medium text-muted">
               Store order · {storeId.slice(-6)}
             </div>
             <ul className="divide-y divide-border">
-              {items.map((item) => {
-                const unit = customerUnitPrice(item.price, item.commission);
-                return (
-                  <li
-                    key={item.product_id}
-                    className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center"
-                  >
-                    <div className="relative size-20 shrink-0 overflow-hidden rounded-2xl bg-surface-soft">
-                      {item.image ? (
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : null}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <Link
-                        href={`/products/${item.product_id}`}
-                        className="font-semibold hover:text-brand"
-                      >
-                        {item.name}
-                      </Link>
-                      <p className="mt-1 text-sm text-muted">
-                        {formatNaira(unit)} / {item.unit}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        className="grid size-9 place-items-center rounded-lg border border-border"
-                        onClick={async () => {
-                          try {
-                            if (item.quantity <= 1) {
-                              await removeCartItem(item.product_id).unwrap();
-                            } else {
-                              await updateCartItem({
-                                product_id: item.product_id,
-                                quantity: item.quantity - 1,
-                              }).unwrap();
-                            }
-                          } catch (err) {
-                            toast.error(getErrorMessage(err, "Update failed"));
-                          }
-                        }}
-                      >
-                        <Minus className="size-4" />
-                      </button>
-                      <span className="w-8 text-center text-sm font-medium">
-                        {item.quantity}
-                      </span>
-                      <button
-                        className="grid size-9 place-items-center rounded-lg border border-border"
-                        onClick={async () => {
-                          try {
+              {items.map((item) => (
+                <li
+                  key={item.product_id}
+                  className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center"
+                >
+                  <div className="relative size-20 shrink-0 overflow-hidden rounded-2xl bg-surface-soft">
+                    {item.image ? (
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : null}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <Link
+                      href={`/products/${item.product_id}`}
+                      className="font-semibold hover:text-brand"
+                    >
+                      {item.name}
+                    </Link>
+                    <p className="mt-1 text-sm text-muted">
+                      {formatNaira(item.price)} / {item.unit}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="grid size-9 place-items-center rounded-lg border border-border"
+                      onClick={async () => {
+                        try {
+                          if (item.quantity <= 1) {
+                            await removeCartItem(item.product_id).unwrap();
+                          } else {
                             await updateCartItem({
                               product_id: item.product_id,
-                              quantity: item.quantity + 1,
+                              quantity: item.quantity - 1,
                             }).unwrap();
-                          } catch (err) {
-                            toast.error(getErrorMessage(err, "Update failed"));
                           }
-                        }}
-                      >
-                        <Plus className="size-4" />
-                      </button>
-                      <button
-                        className="ml-2 grid size-9 place-items-center rounded-lg border border-border text-danger"
-                        onClick={async () => {
-                          try {
-                            await removeCartItem(item.product_id).unwrap();
-                          } catch (err) {
-                            toast.error(getErrorMessage(err, "Remove failed"));
-                          }
-                        }}
-                      >
-                        <Trash2 className="size-4" />
-                      </button>
-                    </div>
-                    <p className="min-w-24 text-right font-semibold">
-                      {formatNaira(item.line_total + item.line_commission)}
-                    </p>
-                  </li>
-                );
-              })}
+                        } catch (err) {
+                          toast.error(getErrorMessage(err, "Update failed"));
+                        }
+                      }}
+                    >
+                      <Minus className="size-4" />
+                    </button>
+                    <span className="w-8 text-center text-sm font-medium">
+                      {item.quantity}
+                    </span>
+                    <button
+                      className="grid size-9 place-items-center rounded-lg border border-border"
+                      onClick={async () => {
+                        try {
+                          await updateCartItem({
+                            product_id: item.product_id,
+                            quantity: item.quantity + 1,
+                          }).unwrap();
+                        } catch (err) {
+                          toast.error(getErrorMessage(err, "Update failed"));
+                        }
+                      }}
+                    >
+                      <Plus className="size-4" />
+                    </button>
+                    <button
+                      className="ml-2 grid size-9 place-items-center rounded-lg border border-border text-danger"
+                      onClick={async () => {
+                        try {
+                          await removeCartItem(item.product_id).unwrap();
+                        } catch (err) {
+                          toast.error(getErrorMessage(err, "Remove failed"));
+                        }
+                      }}
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
+                  </div>
+                  <p className="min-w-24 text-right font-semibold">
+                    {formatNaira(item.line_total)}
+                  </p>
+                </li>
+              ))}
             </ul>
           </div>
         ))}
@@ -174,17 +168,14 @@ export default function CartPage() {
             <dt className="text-muted">Subtotal</dt>
             <dd>{formatNaira(cart.subtotal)}</dd>
           </div>
-          <div className="flex justify-between">
-            <dt className="text-muted">Partner commission</dt>
-            <dd>{formatNaira(cart.total_commission)}</dd>
-          </div>
           <div className="flex justify-between border-t border-border pt-3 text-base font-semibold">
             <dt>Items total</dt>
             <dd className="text-brand">{formatNaira(cart.total)}</dd>
           </div>
         </dl>
         <p className="mt-3 text-xs text-muted">
-          Delivery fees are calculated at checkout from your state.
+          Delivery fees are calculated at checkout from your state and delivery
+          method.
         </p>
         <Link href="/checkout" className="mt-6 block">
           <Button className="w-full" size="lg">

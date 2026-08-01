@@ -199,7 +199,10 @@ export default function EditProductPage() {
               onChange={(e) => setForm({ ...form, price: e.target.value })}
             />
           </Field>
-          <Field label="Commission %">
+          <Field
+            label="Commission %"
+            hint="Partner share of list price. Customers pay the list price only."
+          >
             <Input
               required
               type="number"

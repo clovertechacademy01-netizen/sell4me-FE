@@ -156,7 +156,7 @@ export function WalletPanel() {
             </p>
           </div>
 
-          <Field label="Bank">
+          <Field label="Bank" hint="Type to search by bank name.">
             {banksLoading ? (
               <div className="flex h-11 items-center gap-2 text-sm text-muted">
                 <Spinner className="size-4" />
@@ -165,12 +165,13 @@ export function WalletPanel() {
             ) : (
               <Select
                 required
+                isSearchable
+                isClearable
                 value={form.bank_code}
-                placeholder="Select bank"
+                placeholder="Search banks…"
                 options={banks.map((bank) => ({
                   value: bank.code,
                   label: bank.name,
-                  description: `Code · ${bank.code}`,
                 }))}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, bank_code: e.target.value }))

@@ -10,7 +10,7 @@ import { ProductGrid } from "@/components/store-card";
 import { Button, EmptyState, Spinner } from "@/components/ui";
 import { getErrorMessage } from "@/lib/axios";
 import { peekAffiliateCode } from "@/lib/session";
-import { customerUnitPrice, formatNaira } from "@/lib/utils";
+import { formatNaira } from "@/lib/utils";
 import {
   useAddCartItemsMutation,
   useClearCartMutation,
@@ -51,7 +51,7 @@ export default function ProductDetailPage() {
   const storeProducts = data.store_products || [];
   const similar = data.similar_products || [];
   const general = data.general_products || [];
-  const total = customerUnitPrice(product.price, product.commission);
+  const total = Number(product.price || 0);
 
   return (
     <div className="container-page space-y-12 py-8">

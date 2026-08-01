@@ -10,7 +10,7 @@ import { ProductGrid, StoreDiscoverySections } from "@/components/store-card";
 import { Button, EmptyState, Spinner } from "@/components/ui";
 import { getErrorMessage } from "@/lib/axios";
 import { peekAffiliateCode } from "@/lib/session";
-import { customerUnitPrice, formatNaira } from "@/lib/utils";
+import { formatNaira } from "@/lib/utils";
 import {
   useAddCartItemsMutation,
   useClearCartMutation,
@@ -64,7 +64,7 @@ export default function ShopLandingPage() {
   }
 
   if (data.type === "product") {
-    const total = customerUnitPrice(data.product.price, data.product.commission);
+    const total = Number(data.product.price || 0);
     const storeProducts = data.store_products || [];
     const similar = data.similar_products || [];
     const general = data.general_products || [];
@@ -98,9 +98,7 @@ export default function ShopLandingPage() {
             <p className="mt-3 text-2xl font-semibold text-brand">
               {formatNaira(total)}
             </p>
-            <p className="mt-1 text-sm text-muted">
-              Includes partner commission · per {data.product.unit}
-            </p>
+            <p className="mt-1 text-sm text-muted">per {data.product.unit}</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button
                 size="lg"

@@ -132,13 +132,28 @@ function TrackInner() {
                 </div>
                 <div>
                   <dt className="text-muted">Delivery</dt>
-                  <dd className="font-medium">{formatNaira(order.delivery_fee)}</dd>
+                  <dd className="font-medium">
+                    {formatNaira(order.delivery_fee)}
+                    <span className="mt-0.5 block text-xs font-normal text-muted">
+                      {order.delivery_method === "locker"
+                        ? "Locker pickup"
+                        : "Direct delivery"}
+                    </span>
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-muted">Total</dt>
-                  <dd className="font-medium text-brand">{formatNaira(order.total)}</dd>
+                  <dd className="font-medium text-brand">
+                    {formatNaira(order.total)}
+                  </dd>
                 </div>
               </dl>
+              {order.delivery_method === "locker" && order.locker_address ? (
+                <p className="mt-3 text-sm text-muted">
+                  Pickup · {order.locker_address}
+                  {order.locker_id ? ` (${order.locker_id})` : ""}
+                </p>
+              ) : null}
               {(order.waybill_number || order.fez_order_no) && (
                 <p className="mt-3 text-xs text-muted">
                   {order.waybill_number

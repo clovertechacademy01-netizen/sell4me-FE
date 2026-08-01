@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { DashboardShell } from "@/components/dashboard-shell";
 import { EmptyState, Spinner } from "@/components/ui";
 import { getErrorMessage } from "@/lib/axios";
-import { customerUnitPrice, formatNaira } from "@/lib/utils";
+import { formatNaira, partnerEarning } from "@/lib/utils";
 import {
   useCreateAffiliateLinkMutation,
   useGetProductQuery,
@@ -64,8 +64,9 @@ export default function PartnerProductDetailPage() {
     }
   };
 
-  const price = product
-    ? customerUnitPrice(product.price, product.commission)
+  const price = product ? Number(product.price || 0) : 0;
+  const earn = product
+    ? partnerEarning(price, product.commission || 0)
     : 0;
 
   return (
@@ -117,7 +118,10 @@ export default function PartnerProductDetailPage() {
                     {product.name}
                   </h2>
                   <p className="mt-1 text-sm text-muted">
-                    {product.category} · {product.commission}% commission
+                    {product.category}
+                    {product.commission != null
+                      ? ` · ${product.commission}% commission`
+                      : ""}
                   </p>
                 </div>
                 {link?.link_url ? (
@@ -152,6 +156,12 @@ export default function PartnerProductDetailPage() {
               <p className="display-font text-3xl font-semibold tracking-tight">
                 {formatNaira(price)}
               </p>
+              {product.commission != null ? (
+                <p className="text-sm text-muted">
+                  You earn ~{formatNaira(earn)} per sale ({product.commission}%
+                  of list price)
+                </p>
+              ) : null}
               {product.specifications &&
               Object.keys(product.specifications).length > 0 ? (
                 <dl className="grid gap-2 border-t border-border pt-4 text-sm">

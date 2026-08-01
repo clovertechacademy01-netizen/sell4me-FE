@@ -17,6 +17,8 @@ type SelectProps = {
   onChange?: (event: ChangeEvent<HTMLSelectElement>) => void;
   className?: string;
   placeholder?: string;
+  isSearchable?: boolean;
+  isClearable?: boolean;
   children?: ReactNode;
   options?: Array<{
     value: string;
@@ -43,6 +45,8 @@ export function Select({
   disabled,
   name,
   id,
+  isSearchable = true,
+  isClearable = false,
 }: SelectProps) {
   const parsedChildren: SelectOption[] = (Array.isArray(children) ? children : [children])
     .flatMap((child) => {
@@ -89,7 +93,17 @@ export function Select({
         inputId={id}
         name={name}
         isDisabled={disabled}
+        isSearchable={isSearchable}
+        isClearable={isClearable}
         placeholder={placeholder}
+        noOptionsMessage={() => "No options found"}
+        filterOption={(option, rawInput) => {
+          const query = rawInput.trim().toLowerCase();
+          if (!query) return true;
+          const label = option.label.toLowerCase();
+          const description = (option.data.description || "").toLowerCase();
+          return label.includes(query) || description.includes(query);
+        }}
         onChange={(option) => {
           onChange?.({
             target: { value: option?.value ?? "" },
@@ -112,7 +126,7 @@ export function Select({
           clearIndicator: () => "px-2 text-muted",
           menu: () =>
             "mt-2 overflow-hidden rounded-lg border border-border bg-white shadow-[0_4px_12px_rgba(10,42,107,0.08)]",
-          menuList: () => "p-1.5",
+          menuList: () => "max-h-60 p-1.5",
           option: (state) =>
             cn(
               "cursor-pointer rounded-md px-3 py-2 text-sm transition",
@@ -139,7 +153,7 @@ export function Select({
               </div>
             ) : null}
           </div>
-        )}
+        }}
       />
     </div>
   );
