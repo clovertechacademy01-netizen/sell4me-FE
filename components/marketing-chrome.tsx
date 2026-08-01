@@ -23,11 +23,11 @@ export function MarketingChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   if (!isMarketingRoute(pathname)) {
-    return <main className="min-h-full">{children}</main>;
+    return <main className="flex min-h-dvh flex-1 flex-col">{children}</main>;
   }
 
   return (
-    <div className="flex min-h-full flex-col">
+    <div className="flex min-h-dvh flex-1 flex-col">
       <SiteHeader />
       <main className="flex-1">{children}</main>
       <SiteFooter />

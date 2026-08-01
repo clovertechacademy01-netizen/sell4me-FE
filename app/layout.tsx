@@ -37,7 +37,7 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       className={`${body.variable} ${display.variable} h-full`}
     >
-      <body className="min-h-full font-sans antialiased">
+      <body className="flex min-h-dvh flex-col font-sans antialiased">
         <AppProviders>
           <MarketingChrome>{children}</MarketingChrome>
           <AppLoader />

@@ -138,7 +138,7 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-border bg-surface-soft">
+    <footer className="mt-auto w-full shrink-0 border-t border-border bg-surface-soft">
       <div className="container-page grid gap-10 py-16 md:grid-cols-[1.2fr_1fr_1fr]">
         <div>
           <BrandLockup href="/" />
