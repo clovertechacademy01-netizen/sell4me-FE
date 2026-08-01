@@ -4,6 +4,8 @@ import type {
   AffiliateLink,
   Cart,
   CheckoutResponse,
+  DeliveryEstimate,
+  FezLockersResponse,
   FezState,
   FezTrackingResponse,
   NotificationItem,
@@ -330,23 +332,34 @@ export const sell4meApi = createApi({
       invalidatesTags: ["Cart"],
     }),
     estimateDelivery: builder.mutation<
-      {
-        message: string;
-        store_id: string;
-        delivery_fee: number;
-        fez_cost: number;
-        markup: number;
-      },
+      DeliveryEstimate,
       {
         store_id: string;
         recipient_state: string;
         value_of_items: number;
+        locker?: boolean;
       }
     >({
       query: (body) => ({
         url: "/api/v1/public/delivery/estimate",
         method: "POST",
         data: body,
+        auth: false,
+      }),
+    }),
+    listPublicLockers: builder.query<FezLockersResponse, string>({
+      query: (state) => ({
+        url: "/api/v1/public/delivery/lockers",
+        auth: false,
+        params: { state },
+      }),
+    }),
+    checkPublicLockerAvailability: builder.query<
+      { locker_id: string; available: boolean },
+      string
+    >({
+      query: (locker_id) => ({
+        url: `/api/v1/public/delivery/lockers/${locker_id}/availability`,
         auth: false,
       }),
     }),
@@ -751,6 +764,8 @@ export const {
   useRemoveCartItemMutation,
   useClearCartMutation,
   useEstimateDeliveryMutation,
+  useListPublicLockersQuery,
+  useLazyCheckPublicLockerAvailabilityQuery,
   useCheckoutMutation,
   useTrackByTokenQuery,
   useTrackByLookupMutation,

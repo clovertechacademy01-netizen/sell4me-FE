@@ -1,4 +1,28 @@
+export type DeliveryMethod = "home" | "locker";
+
 export type Role = "admin" | "merchant" | "customer" | "partner" | "delivery_partner";
+
+export interface FezLocker {
+  id: string;
+  address: string;
+}
+
+export interface FezLockersResponse {
+  items: FezLocker[];
+  max_weight?: number;
+  max_value_of_item?: number;
+}
+
+export interface DeliveryEstimate {
+  message: string;
+  store_id: string;
+  recipient_state: string;
+  value_of_items: number;
+  locker: boolean;
+  delivery_fee: number;
+  fez_cost: number;
+  markup: number;
+}
 
 export type OrderStatus =
   | "pending"
@@ -159,6 +183,9 @@ export interface Order {
   payment_tx_ref?: string;
   delivery_fee?: number;
   fez_base_delivery_cost?: number;
+  delivery_method?: "home" | "locker";
+  locker_id?: string;
+  locker_address?: string;
   recipient_phone?: string;
   recipient_address?: string;
   recipient_state?: string;
