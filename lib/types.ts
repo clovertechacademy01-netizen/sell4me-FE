@@ -83,6 +83,12 @@ export interface Product {
   status: StoreStatus;
 }
 
+/** Public discovery block: another store plus a few of its products. */
+export interface RelatedStoreCatalog {
+  store: Store;
+  products: Product[];
+}
+
 export interface CartItem {
   product_id: string;
   store_id: string;

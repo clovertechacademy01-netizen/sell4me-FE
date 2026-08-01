@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Link2, Plus, ShoppingBag, Wallet } from "lucide-react";
+import { Link2, Plus, ShoppingBag, Store, Wallet } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard-shell";
 import { Button, StatCard } from "@/components/ui";
 import { formatNaira } from "@/lib/utils";
@@ -27,12 +27,12 @@ export default function PartnerHomePage() {
   return (
     <DashboardShell
       title={`Welcome back, ${user?.first_name || "there"}!`}
-      subtitle="Share product or store links and earn commission on delivered attributed orders."
+      subtitle="Browse the marketplace, generate affiliate links, and earn on delivered orders."
       action={
-        <Link href="/partner/links">
+        <Link href="/partner/marketplace">
           <Button>
             <Plus className="size-4" />
-            Create affiliate link
+            Open marketplace
           </Button>
         </Link>
       }
@@ -40,12 +40,20 @@ export default function PartnerHomePage() {
       <div
         className={`grid gap-6 ${isAdmin ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}
       >
-        <Link href="/partner/links" className="block">
+        <Link href="/partner/marketplace" className="block">
+          <StatCard
+            label="Marketplace"
+            value="Browse"
+            icon={Store}
+            meta="Stores and products to promote"
+          />
+        </Link>
+        <Link href="/partner/marketplace" className="block">
           <StatCard
             label="Affiliate links"
             value={String(linkCount)}
             icon={Link2}
-            meta="Active shareable codes"
+            meta="Generated from marketplace cards"
           />
         </Link>
         <Link href="/partner/orders" className="block">
@@ -83,7 +91,8 @@ export default function PartnerHomePage() {
         </div>
         {recentOrders.length === 0 ? (
           <p className="px-6 py-10 text-sm text-muted">
-            No attributed orders yet. Create a link and start sharing.
+            No attributed orders yet. Generate a link from the marketplace and
+            start sharing.
           </p>
         ) : (
           <div className="overflow-x-auto">

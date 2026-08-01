@@ -12,6 +12,7 @@ import type {
   PaymentRecord,
   Product,
   ProductCategory,
+  RelatedStoreCatalog,
   Store,
   TrackingOrder,
   User,
@@ -137,14 +138,77 @@ export const sell4meApi = createApi({
     }),
 
     // Public catalog / cart / checkout
-    getAffiliate: builder.query<Record<string, unknown>, string>({
+    getAffiliate: builder.query<
+      | {
+          type: "product";
+          product: Product;
+          store: Store;
+          store_products: Product[];
+          similar_products: Product[];
+          general_products: Product[];
+          attribution?: {
+            attributed: boolean;
+            already_attributed: boolean;
+          };
+        }
+      | {
+          type: "store";
+          store: Store;
+          store_products: Product[];
+          similar_stores: RelatedStoreCatalog[];
+          general_stores: RelatedStoreCatalog[];
+          attribution?: {
+            attributed: boolean;
+            already_attributed: boolean;
+          };
+        },
+      string
+    >({
       query: (code) => ({
         url: `/api/v1/public/affiliate/${code}`,
         auth: false,
+        // Stamp first-touch partner attribution on the guest cart at landing.
+        guest: true,
+      }),
+      async onQueryStarted(_code, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(sell4meApi.util.invalidateTags(["Cart"]));
+        } catch {
+          // ignore — landing errors are handled by the page
+        }
+      },
+    }),
+    listPublicCategories: builder.query<{ items: ProductCategory[] }, void>({
+      query: () => ({
+        url: "/api/v1/public/categories",
+        auth: false,
+      }),
+    }),
+    listPublicProducts: builder.query<
+      { items: Product[]; pagination: Pagination },
+      {
+        page?: number;
+        limit?: number;
+        category_id?: string;
+        store_id?: string;
+        exclude_store_id?: string;
+      } | void
+    >({
+      query: (params) => ({
+        url: "/api/v1/public/products",
+        auth: false,
+        params: params || undefined,
       }),
     }),
     getPublicProduct: builder.query<
-      { product: Product; store: Store; related_products: Product[] },
+      {
+        product: Product;
+        store: Store;
+        store_products: Product[];
+        similar_products: Product[];
+        general_products: Product[];
+      },
       string
     >({
       query: (id) => ({
@@ -152,12 +216,56 @@ export const sell4meApi = createApi({
         auth: false,
       }),
     }),
+    listPublicStores: builder.query<
+      { items: RelatedStoreCatalog[]; pagination: Pagination },
+      {
+        page?: number;
+        limit?: number;
+        product_category?: string;
+        exclude_store_id?: string;
+      } | void
+    >({
+      query: (params) => ({
+        url: "/api/v1/public/stores",
+        auth: false,
+        params: params || undefined,
+      }),
+    }),
     getPublicStore: builder.query<
-      { store: Store; products: Product[]; related_stores: Store[] },
+      {
+        store: Store;
+        products: Product[];
+        similar_stores: RelatedStoreCatalog[];
+        general_stores: RelatedStoreCatalog[];
+      },
       string
     >({
       query: (id) => ({
         url: `/api/v1/public/stores/${id}`,
+        auth: false,
+      }),
+    }),
+    getPublicRelatedProducts: builder.query<
+      {
+        similar_products: Product[];
+        general_products: Product[];
+      },
+      string
+    >({
+      query: (id) => ({
+        url: `/api/v1/public/products/${id}/related`,
+        auth: false,
+      }),
+    }),
+    getPublicRelatedStores: builder.query<
+      {
+        similar_stores: RelatedStoreCatalog[];
+        general_stores: RelatedStoreCatalog[];
+      },
+      string
+    >({
+      query: (id) => ({
+        url: `/api/v1/public/stores/${id}/related`,
         auth: false,
       }),
     }),
@@ -182,6 +290,7 @@ export const sell4meApi = createApi({
         data: { items },
         auth: false,
         guest: true,
+        // Fallback attribution if landing stamp did not run.
         params: affiliate_code ? { affiliate_code } : undefined,
       }),
       invalidatesTags: ["Cart"],
@@ -628,8 +737,13 @@ export const {
   useBlockDeviceMutation,
   useBlockDeviceByTokenMutation,
   useGetAffiliateQuery,
+  useListPublicCategoriesQuery,
+  useListPublicProductsQuery,
   useGetPublicProductQuery,
+  useListPublicStoresQuery,
   useGetPublicStoreQuery,
+  useGetPublicRelatedProductsQuery,
+  useGetPublicRelatedStoresQuery,
   useGetCartQuery,
   useLazyGetCartQuery,
   useAddCartItemsMutation,

@@ -71,15 +71,21 @@ export function SiteHeader() {
           <Link
             href="/cart"
             className="relative grid size-10 place-items-center rounded-lg text-brand transition hover:bg-surface-high"
-            aria-label="Cart"
+            aria-label={`Cart${count > 0 ? `, ${count} items` : ""}`}
           >
             <ShoppingBag className="size-5" />
             {count > 0 ? (
               <span className="absolute -right-0.5 -top-0.5 grid min-w-5 place-items-center rounded-full border-2 border-white bg-danger px-1 text-[10px] font-semibold text-white">
-                {count}
+                {count > 99 ? "99+" : count}
               </span>
             ) : null}
           </Link>
+
+          {count > 0 ? (
+            <Link href="/checkout" className="hidden sm:block">
+              <Button size="sm">Checkout</Button>
+            </Link>
+          ) : null}
 
           {user ? (
             <Link href={dashboardHref} className="hidden sm:block">
@@ -94,7 +100,9 @@ export function SiteHeader() {
             </Link>
           ) : (
             <Link href="/auth/login" className="hidden sm:block">
-              <Button size="sm">Sign in</Button>
+              <Button size="sm" variant={count > 0 ? "secondary" : "primary"}>
+                Sign in
+              </Button>
             </Link>
           )}
         </div>
@@ -112,8 +120,15 @@ export function SiteHeader() {
               {link.label}
             </Link>
           ))}
+          {count > 0 ? (
+            <Link href="/checkout">
+              <Button className="w-full">Checkout ({count})</Button>
+            </Link>
+          ) : null}
           <Link href={user ? dashboardHref : "/auth/login"}>
-            <Button className="w-full">{user ? "Dashboard" : "Sign in"}</Button>
+            <Button className="w-full" variant={count > 0 ? "secondary" : "primary"}>
+              {user ? "Dashboard" : "Sign in"}
+            </Button>
           </Link>
         </div>
       </div>

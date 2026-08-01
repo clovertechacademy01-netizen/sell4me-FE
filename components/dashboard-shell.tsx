@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   Bell,
-  Link2,
   LogOut,
   Package,
   Store,
@@ -31,7 +30,7 @@ function navFor(role: Role, isAdmin = false) {
   if (role === "partner") {
     const links = [
       { href: "/partner", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/partner/links", label: "Affiliate links", icon: Link2 },
+      { href: "/partner/marketplace", label: "Marketplace", icon: Store },
       { href: "/partner/orders", label: "Orders", icon: ShoppingBag },
       { href: "/partner/wallet", label: "Wallet", icon: Wallet },
     ];
