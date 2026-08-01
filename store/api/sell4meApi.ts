@@ -613,8 +613,11 @@ export const sell4meApi = createApi({
       providesTags: ["Wallet"],
     }),
     listBanks: builder.query<
-      | { data?: Array<{ code: string; name: string }> }
-      | Array<{ code: string; name: string }>,
+      {
+        success?: boolean;
+        message?: string;
+        data: Array<{ id?: number | string; code: string; name: string }>;
+      },
       string | void
     >({
       query: (country_code = "NG") => ({
@@ -623,8 +626,8 @@ export const sell4meApi = createApi({
     }),
     verifyBankAccount: builder.mutation<
       {
-        data?: { account_name?: string; account_number?: string };
-        account_name?: string;
+        account_name: string;
+        account_number: string;
       },
       { bank_code: string; account_number: string }
     >({
@@ -647,7 +650,13 @@ export const sell4meApi = createApi({
       query: (body) => ({
         url: "/api/v1/payments/flutterwave/transfer",
         method: "POST",
-        data: body,
+        data: {
+          bank_code: body.bank_code,
+          account_number: body.account_number,
+          amount: body.amount,
+          currency: body.currency || "NGN",
+          narration: body.narration,
+        },
       }),
       invalidatesTags: ["Wallet"],
     }),
