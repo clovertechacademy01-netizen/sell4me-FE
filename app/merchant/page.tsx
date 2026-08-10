@@ -87,7 +87,7 @@ export default function MerchantHomePage() {
           </h2>
           <Link
             href="/merchant/orders"
-            className="text-sm font-semibold text-brand hover:underline"
+            className="text-sm font-semibold text-accent hover:underline"
           >
             View all
           </Link>
@@ -113,7 +113,7 @@ export default function MerchantHomePage() {
                     <td>
                       <Link
                         href={`/merchant/orders/${order.id}`}
-                        className="font-medium hover:text-brand"
+                        className="font-medium hover:text-accent"
                       >
                         #{order.id.slice(0, 8)}
                       </Link>

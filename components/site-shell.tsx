@@ -60,7 +60,7 @@ export function SiteHeader() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-muted transition hover:text-brand"
+              className="text-sm font-medium text-muted transition hover:text-accent"
             >
               {link.label}
             </Link>
@@ -83,7 +83,7 @@ export function SiteHeader() {
 
           {count > 0 ? (
             <Link href="/checkout" className="hidden sm:block">
-              <Button size="sm">Checkout</Button>
+              <Button size="sm" variant="accent">Checkout</Button>
             </Link>
           ) : null}
 
@@ -122,7 +122,7 @@ export function SiteHeader() {
           ))}
           {count > 0 ? (
             <Link href="/checkout">
-              <Button className="w-full">Checkout ({count})</Button>
+              <Button className="w-full" variant="accent">Checkout ({count})</Button>
             </Link>
           ) : null}
           <Link href={user ? dashboardHref : "/auth/login"}>
@@ -150,13 +150,13 @@ export function SiteFooter() {
         <div>
           <p className="text-sm font-semibold text-foreground">Quick links</p>
           <div className="mt-4 flex flex-col gap-3 text-sm text-muted">
-            <Link href="/auth/register?role=merchant" className="hover:text-brand">
+            <Link href="/auth/register?role=merchant" className="hover:text-accent">
               Start selling
             </Link>
-            <Link href="/auth/register?role=partner" className="hover:text-brand">
+            <Link href="/auth/register?role=partner" className="hover:text-accent">
               Partner program
             </Link>
-            <Link href="/track-delivery" className="hover:text-brand">
+            <Link href="/track-delivery" className="hover:text-accent">
               Track order
             </Link>
           </div>
@@ -164,13 +164,13 @@ export function SiteFooter() {
         <div>
           <p className="text-sm font-semibold text-foreground">Support</p>
           <div className="mt-4 flex flex-col gap-3 text-sm text-muted">
-            <Link href="/auth/login" className="hover:text-brand">
+            <Link href="/auth/login" className="hover:text-accent">
               Sign in
             </Link>
-            <Link href="/cart" className="hover:text-brand">
+            <Link href="/cart" className="hover:text-accent">
               Your cart
             </Link>
-            <Link href="/#how-it-works" className="hover:text-brand">
+            <Link href="/#how-it-works" className="hover:text-accent">
               How it works
             </Link>
           </div>

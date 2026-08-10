@@ -95,7 +95,7 @@ export default function ShopLandingPage() {
             <h1 className="mt-2 display-font text-3xl font-semibold tracking-tight sm:text-4xl">
               {data.product.name}
             </h1>
-            <p className="mt-3 text-2xl font-semibold text-brand">
+            <p className="mt-3 text-2xl font-semibold text-accent">
               {formatNaira(total)}
             </p>
             <p className="mt-1 text-sm text-muted">per {data.product.unit}</p>
@@ -119,7 +119,7 @@ export default function ShopLandingPage() {
               </Button>
               <Button
                 size="lg"
-                variant="secondary"
+                variant="accent"
                 disabled={busy || data.product.quantity <= 0}
                 onClick={async () => {
                   try {
@@ -193,7 +193,7 @@ export default function ShopLandingPage() {
   return (
     <div className="container-page space-y-10 py-8">
       <FadeIn className="overflow-hidden rounded-xl border border-border bg-white">
-        <div className="relative bg-[linear-gradient(120deg,#0066ff,#3d8bff)] px-5 py-8 text-white sm:px-8 sm:py-10">
+        <div className="relative bg-[linear-gradient(120deg,#0b3d2e,#1a5c45)] px-5 py-8 text-white sm:px-8 sm:py-10">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.25),transparent_45%)]" />
           <div className="relative flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>

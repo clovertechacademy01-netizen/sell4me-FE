@@ -25,7 +25,7 @@ function ResetInner() {
       title="Choose a new password"
       description="Use the OTP from your email, then set a strong new password."
       footer={
-        <Link href="/auth/login" className="font-medium text-brand hover:underline">
+        <Link href="/auth/login" className="font-medium text-accent hover:underline">
           Back to sign in
         </Link>
       }

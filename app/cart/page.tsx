@@ -92,7 +92,7 @@ export default function CartPage() {
                   <div className="min-w-0 flex-1">
                     <Link
                       href={`/products/${item.product_id}`}
-                      className="font-semibold hover:text-brand"
+                      className="font-semibold hover:text-accent"
                     >
                       {item.name}
                     </Link>
@@ -170,7 +170,7 @@ export default function CartPage() {
           </div>
           <div className="flex justify-between border-t border-border pt-3 text-base font-semibold">
             <dt>Items total</dt>
-            <dd className="text-brand">{formatNaira(cart.total)}</dd>
+            <dd className="text-accent">{formatNaira(cart.total)}</dd>
           </div>
         </dl>
         <p className="mt-3 text-xs text-muted">
@@ -178,7 +178,7 @@ export default function CartPage() {
           method.
         </p>
         <Link href="/checkout" className="mt-6 block">
-          <Button className="w-full" size="lg">
+          <Button className="w-full" size="lg" variant="accent">
             Checkout
           </Button>
         </Link>

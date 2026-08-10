@@ -134,7 +134,7 @@ function StoreCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <Link href={`/partner/marketplace/stores/${store.id}`} className="min-w-0">
-              <h3 className="truncate text-sm font-semibold tracking-tight hover:text-brand">
+              <h3 className="truncate text-sm font-semibold tracking-tight hover:text-accent">
                 {store.name}
               </h3>
               <p className="mt-0.5 truncate text-[11px] text-muted">
@@ -190,7 +190,7 @@ function ProductPromoCard({
             href={`/partner/marketplace/products/${product.id}`}
             className="min-w-0"
           >
-            <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-medium leading-snug hover:text-brand">
+            <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-medium leading-snug hover:text-accent">
               {product.name}
             </h3>
             <p className="mt-0.5 truncate text-[11px] text-muted">
@@ -285,7 +285,7 @@ export default function PartnerMarketplacePage() {
             className={cn(
               "border-b-2 px-4 py-3 text-sm font-semibold transition",
               tab === item.id
-                ? "border-brand text-brand"
+                ? "border-accent text-accent"
                 : "border-transparent text-muted hover:text-foreground",
             )}
           >

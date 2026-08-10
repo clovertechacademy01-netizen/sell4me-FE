@@ -82,12 +82,12 @@ export default function ProductDetailPage() {
           {store ? (
             <Link
               href={`/stores/${store.id}`}
-              className="mt-2 inline-block text-sm text-muted hover:text-brand"
+              className="mt-2 inline-block text-sm text-muted hover:text-accent"
             >
               Sold by {store.name}
             </Link>
           ) : null}
-          <p className="mt-4 text-2xl font-semibold text-brand">
+          <p className="mt-4 text-2xl font-semibold text-accent">
             {formatNaira(total)}
           </p>
           <p className="text-sm text-muted">per {product.unit}</p>
@@ -132,7 +132,7 @@ export default function ProductDetailPage() {
             </Button>
             <Button
               size="lg"
-              variant="secondary"
+              variant="accent"
               disabled={product.quantity <= 0 || busy}
               onClick={async () => {
                 try {

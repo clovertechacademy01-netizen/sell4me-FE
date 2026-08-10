@@ -21,8 +21,8 @@ export function AuthShell({
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-background px-4 py-12">
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -left-24 top-16 h-72 w-72 rounded-full bg-brand/8 blur-3xl" />
-        <div className="absolute -right-16 bottom-10 h-80 w-80 rounded-full bg-navy/5 blur-3xl" />
+        <div className="absolute -left-24 top-16 h-72 w-72 rounded-full bg-brand/10 blur-3xl" />
+        <div className="absolute -right-16 bottom-10 h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
       </div>
 
       <FadeIn
@@ -43,7 +43,7 @@ export function AuthShell({
           <div className="mt-6 text-center text-sm text-muted">{footer}</div>
         ) : (
           <p className="mt-6 text-center text-sm text-muted">
-            <Link href="/" className="font-semibold text-brand hover:underline">
+            <Link href="/" className="font-semibold text-accent hover:underline">
               Back to Sell4Me
             </Link>
           </p>

@@ -42,7 +42,7 @@ export function HeartbeatLoader({
     >
       <div className="app-loader__gloss absolute inset-0" />
       <div className="relative flex flex-col items-center gap-4">
-        <div className="logo-heartbeat grid size-16 place-items-center rounded-2xl bg-brand text-xl font-bold text-white shadow-[0_16px_40px_rgba(0,102,255,0.45)]">
+        <div className="logo-heartbeat grid size-16 place-items-center rounded-2xl bg-brand text-xl font-bold text-white shadow-[0_16px_40px_rgba(11,61,46,0.4)]">
           S4
         </div>
       </div>

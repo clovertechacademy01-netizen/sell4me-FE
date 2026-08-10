@@ -84,7 +84,7 @@ export default function PartnerHomePage() {
           </h2>
           <Link
             href="/partner/orders"
-            className="text-sm font-semibold text-brand hover:underline"
+            className="text-sm font-semibold text-accent hover:underline"
           >
             View all
           </Link>

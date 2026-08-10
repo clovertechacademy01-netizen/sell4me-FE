@@ -46,7 +46,7 @@ export default function PartnerOrdersPage() {
               </div>
               <div className="mt-3 flex justify-between text-sm">
                 <span className="text-muted">Your commission</span>
-                <span className="font-semibold text-brand">
+                <span className="font-semibold text-accent">
                   {formatNaira(order.total_commission || 0)}
                 </span>
               </div>

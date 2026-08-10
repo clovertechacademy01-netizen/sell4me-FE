@@ -4,9 +4,11 @@ Next.js frontend for the Sell4Me affiliate commerce platform.
 
 ## Design
 
-- **Primary:** white
-- **Secondary / brand:** `#0066FF`
-- Typography: Sora (display) + Manrope (body)
+- **Primary brand / nav / buttons:** `#0B3D2E`
+- **Accent / CTA / interactive:** `#FF7A45`
+- **Text:** `#16221C` (primary), `#5B6B63` (secondary)
+- **Surfaces:** `#F6F5F1` (page), `#EBF2EE` (soft sections), `#072A20` (pressed / dark)
+- Typography: Bricolage Grotesque (display) + Work Sans (body)
 
 ## Surfaces
 

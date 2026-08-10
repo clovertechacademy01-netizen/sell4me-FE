@@ -44,7 +44,7 @@ function RegisterInner() {
       footer={
         <>
           Already registered?{" "}
-          <Link href="/auth/login" className="font-medium text-brand hover:underline">
+          <Link href="/auth/login" className="font-medium text-accent hover:underline">
             Sign in
           </Link>
         </>

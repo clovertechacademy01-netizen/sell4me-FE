@@ -41,7 +41,7 @@ export default function StorePage() {
   return (
     <div className="container-page space-y-10 py-8">
       <FadeIn className="overflow-hidden rounded-xl border border-border bg-white">
-        <div className="relative bg-[linear-gradient(120deg,#0b1220,#0066ff)] px-5 py-8 text-white sm:px-8 sm:py-10">
+        <div className="relative bg-[linear-gradient(120deg,#072a20,#0b3d2e)] px-5 py-8 text-white sm:px-8 sm:py-10">
           <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.18em] text-white/70">

@@ -64,7 +64,7 @@ export default function MerchantProductsPage() {
                   <td className="text-right">
                     <Link
                       href={`/merchant/products/${item.id}`}
-                      className="font-medium text-brand hover:underline"
+                      className="font-medium text-accent hover:underline"
                     >
                       Edit
                     </Link>

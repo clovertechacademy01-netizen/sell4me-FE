@@ -27,7 +27,7 @@ function VerifyInner() {
       title="Verify your email"
       description="Enter the 6-digit code we sent to your inbox."
       footer={
-        <Link href="/auth/login" className="font-medium text-brand hover:underline">
+        <Link href="/auth/login" className="font-medium text-accent hover:underline">
           Back to sign in
         </Link>
       }
@@ -68,7 +68,7 @@ function VerifyInner() {
       </form>
       <button
         type="button"
-        className="mt-4 w-full text-sm font-medium text-brand hover:underline"
+        className="mt-4 w-full text-sm font-medium text-accent hover:underline"
         onClick={async () => {
           try {
             await resendOtp({ email: form.email }).unwrap();

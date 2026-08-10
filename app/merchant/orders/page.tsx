@@ -76,7 +76,7 @@ export default function MerchantOrdersPage() {
                 <span className="text-muted">
                   {order.items?.length || 0} items · {order.recipient_state}
                 </span>
-                <span className="font-semibold text-brand">
+                <span className="font-semibold text-accent">
                   {formatNaira(order.total + (order.delivery_fee || 0))}
                 </span>
               </div>

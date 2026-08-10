@@ -28,7 +28,7 @@ export default function HomePage() {
           </p>
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
             <Link href="/auth/register?role=merchant">
-              <Button size="lg" className="min-w-52 px-10">
+              <Button variant="accent" size="lg" className="min-w-52 px-10">
                 Start selling
               </Button>
             </Link>
@@ -97,7 +97,9 @@ export default function HomePage() {
 
           <div className="mt-16 flex flex-wrap items-center justify-center gap-4">
             <Link href="/auth/register?role=merchant">
-              <Button size="lg">Start selling</Button>
+              <Button size="lg" variant="accent">
+                Start selling
+              </Button>
             </Link>
             <Link href="/auth/register?role=partner">
               <Button size="lg" variant="secondary">

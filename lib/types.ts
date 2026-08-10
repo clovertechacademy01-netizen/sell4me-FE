@@ -189,6 +189,8 @@ export interface Order {
   status: OrderStatus;
   payment_status: PaymentStatus;
   payment_tx_ref?: string;
+  /** Customer-facing 8-char tracking code from checkout email */
+  tracking_code?: string;
   delivery_fee?: number;
   fez_base_delivery_cost?: number;
   delivery_method?: DeliveryMethod;
@@ -222,6 +224,10 @@ export interface WalletTransaction {
   type: "credit" | "debit";
   category: string;
   amount: number;
+  /** Amount sent to bank (withdrawal only) */
+  transfer_amount?: number;
+  /** Platform withdrawal fee (withdrawal only) */
+  withdrawal_fee?: number;
   balance_after: number;
   currency: string;
   status: string;
@@ -235,6 +241,7 @@ export interface WalletTransaction {
 export interface PaymentRecord {
   id: string;
   tx_ref: string;
+  tracking_code?: string;
   customer_id: string;
   order_ids: string[];
   amount: number;
@@ -272,6 +279,7 @@ export interface NotificationItem {
 export interface TrackingOrder {
   id: string;
   store_name: string;
+  tracking_code?: string;
   status: OrderStatus;
   payment_status: PaymentStatus;
   delivery_status?: string;
@@ -303,11 +311,15 @@ export interface CheckoutResponse {
       total: number;
     }
   >;
+  /** Present on newer checkout responses */
+  tracking_code?: string;
+  payment_tx_ref?: string;
   user: { id: string; email: string; first_name: string; last_name: string };
   payment: {
     payment: {
       id: string;
       tx_ref: string;
+      tracking_code?: string;
       order_cost: number;
       delivery_fee_total: number;
       amount: number;

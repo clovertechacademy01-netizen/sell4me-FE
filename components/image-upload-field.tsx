@@ -57,7 +57,7 @@ export function ImageUploadField({
         htmlFor={inputId}
         className={cn(
           "group block cursor-pointer overflow-hidden rounded-xl border border-dashed border-outline-variant bg-white transition",
-          "hover:border-brand/40 hover:shadow-[0_4px_12px_rgba(0,102,255,0.08)]",
+          "hover:border-brand/40 hover:shadow-[0_4px_12px_rgba(255,122,69,0.08)]",
           "focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/20",
           (disabled || uploading) && "cursor-not-allowed opacity-70",
         )}

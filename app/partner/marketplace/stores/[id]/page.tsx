@@ -70,7 +70,7 @@ export default function PartnerStoreDetailPage() {
     >
       <Link
         href="/partner/marketplace"
-        className="inline-flex items-center gap-2 text-sm font-medium text-muted hover:text-brand"
+        className="inline-flex items-center gap-2 text-sm font-medium text-muted hover:text-accent"
       >
         <ArrowLeft className="size-4" />
         Back to marketplace

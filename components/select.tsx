@@ -114,7 +114,7 @@ export function Select({
             cn(
               "min-h-11 rounded-lg border bg-white px-3 text-sm transition",
               state.isFocused
-                ? "border-brand ring-2 ring-brand/20"
+                ? "border-accent ring-2 ring-accent/20"
                 : "border-outline-variant",
             ),
           valueContainer: () => "gap-2 py-0.5",
@@ -125,13 +125,13 @@ export function Select({
           dropdownIndicator: () => "px-2 text-muted",
           clearIndicator: () => "px-2 text-muted",
           menu: () =>
-            "mt-2 overflow-hidden rounded-lg border border-border bg-white shadow-[0_4px_12px_rgba(10,42,107,0.08)]",
+            "mt-2 overflow-hidden rounded-lg border border-border bg-white shadow-[0_4px_12px_rgba(11,61,46,0.08)]",
           menuList: () => "max-h-60 p-1.5",
           option: (state) =>
             cn(
               "cursor-pointer rounded-md px-3 py-2 text-sm transition",
-              state.isSelected && "bg-brand text-white",
-              !state.isSelected && state.isFocused && "bg-brand-soft text-brand-strong",
+              state.isSelected && "bg-accent text-white",
+              !state.isSelected && state.isFocused && "bg-accent-soft text-accent-strong",
               !state.isSelected && !state.isFocused && "text-foreground",
             ),
         }}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { CheckCircle2, CircleAlert } from "lucide-react";
 import { FadeIn } from "@/components/motion";
 import { Button, Spinner } from "@/components/ui";
@@ -10,9 +10,34 @@ import { Button, Spinner } from "@/components/ui";
 function CompleteInner() {
   const params = useSearchParams();
   const status = params.get("status") || params.get("payment_status");
-  const txRef = params.get("tx_ref") || params.get("txRef") || "";
+  const txRefParam = params.get("tx_ref") || params.get("txRef") || "";
+  const trackingParam =
+    params.get("tracking_code") || params.get("trackingCode") || "";
+  const [txRef, setTxRef] = useState(txRefParam);
+  const [trackingCode, setTrackingCode] = useState(trackingParam);
   const failed =
     status === "failed" || status === "cancelled" || status === "abandoned";
+
+  useEffect(() => {
+    try {
+      if (!trackingParam) {
+        const stored = sessionStorage.getItem("sell4me_tracking_code");
+        if (stored) setTrackingCode(stored);
+      }
+      if (!txRefParam) {
+        const stored = sessionStorage.getItem("sell4me_tx_ref");
+        if (stored) setTxRef(stored);
+      }
+      sessionStorage.removeItem("sell4me_tracking_code");
+      sessionStorage.removeItem("sell4me_tx_ref");
+    } catch {
+      /* ignore */
+    }
+  }, [trackingParam, txRefParam]);
+
+  const trackHref = trackingCode
+    ? `/track-delivery?code=${encodeURIComponent(trackingCode)}`
+    : "/track-delivery";
 
   return (
     <div className="container-page py-16">
@@ -32,15 +57,28 @@ function CompleteInner() {
         <p className="mt-3 text-sm text-muted">
           {failed
             ? "You can retry from the payment link in your checkout email."
-            : "We’re confirming payment. Check your email for the tracking link — WhatsApp follows once payment succeeds."}
+            : "We’re confirming payment. Check your email for the tracking code — WhatsApp follows once payment succeeds."}
         </p>
+        {trackingCode && !failed ? (
+          <div className="mt-4 rounded-xl bg-brand-soft px-3 py-3">
+            <p className="text-xs font-medium uppercase tracking-wide text-brand">
+              Tracking code
+            </p>
+            <p className="mt-1 font-mono text-2xl font-semibold tracking-wider text-ink">
+              {trackingCode}
+            </p>
+            <p className="mt-1 text-xs text-muted">
+              Save this to track your delivery anytime.
+            </p>
+          </div>
+        ) : null}
         {txRef ? (
           <p className="mt-4 rounded-xl bg-surface-soft px-3 py-2 text-xs text-muted">
-            Reference: {txRef}
+            Payment reference: {txRef}
           </p>
         ) : null}
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Link href="/track-delivery">
+          <Link href={trackHref}>
             <Button>Track delivery</Button>
           </Link>
           <Link href="/">

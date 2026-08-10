@@ -22,7 +22,7 @@ export function StoreCard({
         className,
       )}
     >
-      <div className="relative flex aspect-[16/10] items-end overflow-hidden bg-[linear-gradient(135deg,#0b1220,#0066ff)] p-3">
+      <div className="relative flex aspect-[16/10] items-end overflow-hidden bg-[linear-gradient(135deg,#072a20,#0b3d2e)] p-3">
         {store.logo ? (
           <div className="relative size-12 overflow-hidden rounded-full border-2 border-white/40 bg-white/20">
             <Image
@@ -40,7 +40,7 @@ export function StoreCard({
         )}
       </div>
       <div className="space-y-1 p-3">
-        <h3 className="line-clamp-1 text-sm font-semibold text-foreground group-hover:text-brand">
+        <h3 className="line-clamp-1 text-sm font-semibold text-foreground group-hover:text-accent">
           {store.name}
         </h3>
         <p className="line-clamp-1 text-[11px] text-muted">
@@ -68,7 +68,7 @@ export function RelatedStoreSection({
         <div className="min-w-0">
           <Link
             href={`/stores/${store.id}`}
-            className="display-font text-xl font-semibold tracking-tight hover:text-brand"
+            className="display-font text-xl font-semibold tracking-tight hover:text-accent"
           >
             {store.name}
           </Link>
@@ -79,7 +79,7 @@ export function RelatedStoreSection({
         </div>
         <Link
           href={`/stores/${store.id}`}
-          className="shrink-0 text-sm font-medium text-brand hover:underline"
+          className="shrink-0 text-sm font-medium text-accent hover:underline"
         >
           View store
         </Link>

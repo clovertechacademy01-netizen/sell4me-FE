@@ -18,7 +18,7 @@ export function Button({
   size = "md",
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "secondary" | "ghost" | "danger";
+  variant?: "primary" | "accent" | "secondary" | "ghost" | "danger";
   size?: "sm" | "md" | "lg";
 }) {
   return (
@@ -29,9 +29,11 @@ export function Button({
         size === "md" && "h-11 px-4 text-sm",
         size === "lg" && "h-12 px-6 text-[15px]",
         variant === "primary" &&
-          "bg-brand text-white shadow-sm hover:brightness-110",
+          "bg-brand text-white shadow-sm hover:bg-brand-strong active:bg-brand-strong",
+        variant === "accent" &&
+          "bg-accent text-white shadow-[0_8px_24px_rgba(255,122,69,0.28)] hover:bg-accent-strong active:bg-accent-strong",
         variant === "secondary" &&
-          "border border-brand bg-white text-brand hover:bg-surface-soft",
+          "border border-brand bg-white text-brand hover:bg-brand-soft",
         variant === "ghost" &&
           "text-muted hover:bg-surface-high hover:text-foreground",
         variant === "danger" && "bg-danger text-white hover:bg-red-700",
@@ -49,7 +51,7 @@ export function Input({
   return (
     <input
       className={cn(
-        "h-11 w-full rounded-lg border border-outline-variant bg-white px-4 text-sm outline-none transition placeholder:text-muted/65 focus:border-brand focus:ring-2 focus:ring-brand/20",
+        "h-11 w-full rounded-lg border border-outline-variant bg-white px-4 text-sm outline-none transition placeholder:text-muted/65 focus:border-accent focus:ring-2 focus:ring-accent/20",
         className,
       )}
       {...props}
@@ -64,7 +66,7 @@ export function Textarea({
   return (
     <textarea
       className={cn(
-        "min-h-28 w-full rounded-lg border border-outline-variant bg-white px-4 py-3 text-sm outline-none transition placeholder:text-muted/65 focus:border-brand focus:ring-2 focus:ring-brand/20",
+        "min-h-28 w-full rounded-lg border border-outline-variant bg-white px-4 py-3 text-sm outline-none transition placeholder:text-muted/65 focus:border-accent focus:ring-2 focus:ring-accent/20",
         className,
       )}
       {...props}
@@ -79,7 +81,7 @@ export function NativeSelect({
   return (
     <select
       className={cn(
-        "h-11 w-full rounded-lg border border-outline-variant bg-white px-4 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20",
+        "h-11 w-full rounded-lg border border-outline-variant bg-white px-4 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20",
         className,
       )}
       {...props}
@@ -129,15 +131,16 @@ export function Badge({
   tone = "brand",
 }: {
   children: ReactNode;
-  tone?: "brand" | "success" | "warning" | "danger" | "neutral";
+  tone?: "brand" | "accent" | "success" | "warning" | "danger" | "neutral";
 }) {
   return (
     <span
       className={cn(
         "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold tracking-wide",
         tone === "brand" && "bg-brand-soft text-brand-strong",
-        tone === "success" && "bg-emerald-100 text-emerald-800",
-        tone === "warning" && "bg-[#ffdbd0] text-[#832600]",
+        tone === "accent" && "bg-accent-soft text-accent-strong",
+        tone === "success" && "bg-brand-soft text-brand-strong",
+        tone === "warning" && "bg-accent-soft text-accent-strong",
         tone === "danger" && "bg-[#ffdad6] text-[#93000a]",
         tone === "neutral" && "bg-surface-high text-muted",
       )}
@@ -174,7 +177,7 @@ export function Spinner({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "inline-block size-5 animate-spin rounded-full border-2 border-brand/20 border-t-brand",
+        "inline-block size-5 animate-spin rounded-full border-2 border-brand/20 border-t-accent",
         className,
       )}
     />
@@ -199,8 +202,8 @@ export function StatCard({
       className={cn(
         "rounded-xl border p-6 transition hover:-translate-y-0.5",
         accent
-          ? "border-transparent bg-brand text-white shadow-[0_8px_24px_rgba(0,102,255,0.2)]"
-          : "border-border bg-white hover:shadow-[0_4px_12px_rgba(0,102,255,0.08)]",
+          ? "border-transparent bg-accent text-white shadow-[0_8px_24px_rgba(255,122,69,0.28)]"
+          : "border-border bg-white hover:shadow-[0_4px_12px_rgba(11,61,46,0.08)]",
       )}
     >
       <div className="flex items-center justify-between gap-3">

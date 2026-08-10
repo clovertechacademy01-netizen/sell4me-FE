@@ -23,7 +23,7 @@ function LoginInner() {
       footer={
         <>
           New here?{" "}
-          <Link href="/auth/register" className="font-medium text-brand hover:underline">
+          <Link href="/auth/register" className="font-medium text-accent hover:underline">
             Create an account
           </Link>
         </>
@@ -67,7 +67,7 @@ function LoginInner() {
           />
         </Field>
         <div className="flex justify-end">
-          <Link href="/auth/forgot-password" className="text-sm font-medium text-brand hover:underline">
+          <Link href="/auth/forgot-password" className="text-sm font-medium text-accent hover:underline">
             Forgot password?
           </Link>
         </div>

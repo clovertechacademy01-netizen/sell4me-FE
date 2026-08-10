@@ -17,6 +17,7 @@ import {
 function TrackInner() {
   const params = useSearchParams();
   const token = params.get("token");
+  const codeFromUrl = params.get("code") || params.get("tracking_code") || "";
   const {
     data: tokenData,
     isLoading: tokenLoading,
@@ -27,6 +28,7 @@ function TrackInner() {
   const [orders, setOrders] = useState<TrackingOrder[]>([]);
   const [form, setForm] = useState({
     email: "",
+    tracking_code: codeFromUrl.toUpperCase(),
     order_id: "",
     payment_tx_ref: "",
   });
@@ -50,8 +52,8 @@ function TrackInner() {
           Track delivery
         </h1>
         <p className="mt-2 max-w-xl text-sm text-muted">
-          Use the secure link from your checkout email, or look up with email plus order
-          ID or payment reference.
+          Use the secure link from your checkout email, or look up with email plus
+          your 8-character tracking code.
         </p>
       </FadeIn>
 
@@ -61,11 +63,21 @@ function TrackInner() {
             className="space-y-4"
             onSubmit={async (e) => {
               e.preventDefault();
+              const tracking_code = form.tracking_code.trim().toUpperCase();
+              if (
+                !tracking_code &&
+                !form.order_id.trim() &&
+                !form.payment_tx_ref.trim()
+              ) {
+                toast.error("Enter your tracking code");
+                return;
+              }
               try {
                 const res = await trackByLookup({
                   email: form.email,
-                  order_id: form.order_id || undefined,
-                  payment_tx_ref: form.payment_tx_ref || undefined,
+                  tracking_code: tracking_code || undefined,
+                  order_id: form.order_id.trim() || undefined,
+                  payment_tx_ref: form.payment_tx_ref.trim() || undefined,
                 }).unwrap();
                 setOrders(res.orders || []);
                 if (!res.orders?.length) toast.message("No orders found");
@@ -82,21 +94,49 @@ function TrackInner() {
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
             </Field>
-            <Field label="Order ID" hint="Optional if you have payment reference">
+            <Field
+              label="Tracking code"
+              hint="8 characters from your confirmation email (e.g. A3B7K9M2)"
+            >
               <Input
-                value={form.order_id}
-                onChange={(e) => setForm({ ...form, order_id: e.target.value })}
-              />
-            </Field>
-            <Field label="Payment reference" hint="Optional if you have order ID">
-              <Input
-                value={form.payment_tx_ref}
+                value={form.tracking_code}
+                maxLength={16}
+                placeholder="A3B7K9M2"
+                className="uppercase tracking-wider"
                 onChange={(e) =>
-                  setForm({ ...form, payment_tx_ref: e.target.value })
+                  setForm({
+                    ...form,
+                    tracking_code: e.target.value.replace(/\s/g, "").toUpperCase(),
+                  })
                 }
               />
             </Field>
-            <Button disabled={loading}>{loading ? "Searching…" : "Look up"}</Button>
+            <details className="rounded-lg border border-border px-3 py-2 text-sm">
+              <summary className="cursor-pointer text-muted">
+                Legacy lookup (order ID or payment reference)
+              </summary>
+              <div className="mt-3 space-y-3">
+                <Field label="Order ID">
+                  <Input
+                    value={form.order_id}
+                    onChange={(e) =>
+                      setForm({ ...form, order_id: e.target.value })
+                    }
+                  />
+                </Field>
+                <Field label="Payment reference">
+                  <Input
+                    value={form.payment_tx_ref}
+                    onChange={(e) =>
+                      setForm({ ...form, payment_tx_ref: e.target.value })
+                    }
+                  />
+                </Field>
+              </div>
+            </details>
+            <Button disabled={loading}>
+              {loading ? "Searching…" : "Look up"}
+            </Button>
           </form>
         </FadeIn>
       ) : null}
@@ -108,13 +148,15 @@ function TrackInner() {
       ) : orders.length ? (
         <div className="grid gap-4">
           {orders.map((order) => (
-            <div
-              key={order.id}
-              className="surface-card p-5"
-            >
+            <div key={order.id} className="surface-card p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h2 className="font-semibold">{order.store_name}</h2>
+                  {order.tracking_code ? (
+                    <p className="mt-1 font-mono text-sm tracking-wider text-brand">
+                      {order.tracking_code}
+                    </p>
+                  ) : null}
                   <p className="mt-1 text-xs text-muted">Order {order.id}</p>
                 </div>
                 <div className="flex flex-wrap gap-2">

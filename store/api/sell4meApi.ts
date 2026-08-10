@@ -374,7 +374,11 @@ export const sell4meApi = createApi({
       invalidatesTags: ["Cart"],
     }),
     trackByToken: builder.query<
-      { message: string; orders: TrackingOrder[] },
+      {
+        message: string;
+        tracking_code?: string;
+        orders: TrackingOrder[];
+      },
       string
     >({
       query: (token) => ({
@@ -384,8 +388,17 @@ export const sell4meApi = createApi({
       }),
     }),
     trackByLookup: builder.mutation<
-      { message: string; orders: TrackingOrder[] },
-      { email: string; order_id?: string; payment_tx_ref?: string }
+      {
+        message: string;
+        tracking_code?: string;
+        orders: TrackingOrder[];
+      },
+      {
+        email: string;
+        order_id?: string;
+        tracking_code?: string;
+        payment_tx_ref?: string;
+      }
     >({
       query: (body) => ({
         url: "/api/v1/public/orders/track-delivery",
@@ -638,7 +651,13 @@ export const sell4meApi = createApi({
       }),
     }),
     transferFunds: builder.mutation<
-      { message: string; transfer_reference: string },
+      {
+        message: string;
+        transfer_reference: string;
+        withdrawal_amount: number;
+        withdrawal_fee: number;
+        total_wallet_debit: number;
+      },
       {
         bank_code: string;
         account_number: string;

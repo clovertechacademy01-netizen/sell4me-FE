@@ -16,7 +16,7 @@ export function InfoTip({
     <span className={cn("relative inline-flex items-center", className)}>
       <button
         type="button"
-        className="group inline-flex size-5 items-center justify-center rounded-full text-muted transition hover:bg-brand-soft hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+        className="group inline-flex size-5 items-center justify-center rounded-full text-muted transition hover:bg-brand-soft hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
         aria-label={label}
         title={children}
       >

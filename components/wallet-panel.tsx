@@ -16,6 +16,9 @@ import {
 
 type Bank = { code: string; name: string };
 
+/** Matches backend default `WITHDRAWAL_FEE` (NGN). */
+const WITHDRAWAL_FEE = 1000;
+
 export function WalletPanel() {
   const { data: walletData, error: walletError, isLoading: walletLoading } =
     useGetWalletQuery();
@@ -51,6 +54,13 @@ export function WalletPanel() {
   const canVerify =
     form.bank_code.length > 0 && /^\d{10}$/.test(form.account_number);
   const accountVerified = Boolean(accountName) && !verifyError;
+  const withdrawAmount = Number(form.amount);
+  const withdrawAmountValid =
+    Number.isFinite(withdrawAmount) && withdrawAmount >= 100;
+  const totalDebit = withdrawAmountValid
+    ? withdrawAmount + WITHDRAWAL_FEE
+    : null;
+  const balance = wallet?.balance ?? 0;
 
   useEffect(() => {
     if (walletError)
@@ -100,7 +110,7 @@ export function WalletPanel() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="relative overflow-hidden rounded-xl bg-brand p-6 text-white shadow-[0_8px_24px_rgba(0,102,255,0.2)]">
+        <div className="relative overflow-hidden rounded-xl bg-brand p-6 text-white shadow-[0_8px_24px_rgba(11,61,46,0.28)]">
           <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
           <p className="relative text-xs font-semibold uppercase tracking-[0.14em] text-white/80">
             Total balance
@@ -129,6 +139,15 @@ export function WalletPanel() {
               return;
             }
 
+            const fee = WITHDRAWAL_FEE;
+            const debit = amount + fee;
+            if (debit > balance) {
+              toast.error(
+                `Need ${formatNaira(debit)} in wallet (amount + ${formatNaira(fee)} fee)`,
+              );
+              return;
+            }
+
             try {
               const res = await transferFunds({
                 bank_code: form.bank_code,
@@ -137,9 +156,11 @@ export function WalletPanel() {
                 currency: "NGN",
                 narration: form.narration || "Sell4Me withdrawal",
               }).unwrap();
+              const chargedFee = res.withdrawal_fee ?? fee;
+              const chargedDebit = res.total_wallet_debit ?? debit;
               toast.success(
                 res.message ||
-                  `Withdrawal initiated${res.transfer_reference ? ` · ${res.transfer_reference}` : ""}`,
+                  `Sent ${formatNaira(res.withdrawal_amount ?? amount)} · fee ${formatNaira(chargedFee)} · debited ${formatNaira(chargedDebit)}`,
               );
               setForm((prev) => ({ ...prev, amount: "" }));
             } catch (err) {
@@ -152,7 +173,9 @@ export function WalletPanel() {
               Withdraw to bank
             </h3>
             <p className="mt-1 text-xs text-muted">
-              Choose a bank, verify the account number, then withdraw.
+              Choose a bank, verify the account, then withdraw. A{" "}
+              {formatNaira(WITHDRAWAL_FEE)} platform fee is added to every
+              withdrawal.
             </p>
           </div>
 
@@ -222,7 +245,7 @@ export function WalletPanel() {
             <p className="text-sm text-danger">{verifyError}</p>
           ) : null}
 
-          <Field label="Amount (min ₦100)">
+          <Field label="Amount to bank (min ₦100)">
             <Input
               required
               type="number"
@@ -235,6 +258,28 @@ export function WalletPanel() {
             />
           </Field>
 
+          {totalDebit !== null ? (
+            <div className="rounded-lg bg-surface-soft px-3 py-2 text-sm">
+              <div className="flex justify-between gap-2 text-muted">
+                <span>To bank</span>
+                <span>{formatNaira(withdrawAmount)}</span>
+              </div>
+              <div className="mt-1 flex justify-between gap-2 text-muted">
+                <span>Withdrawal fee</span>
+                <span>{formatNaira(WITHDRAWAL_FEE)}</span>
+              </div>
+              <div className="mt-2 flex justify-between gap-2 border-t border-border pt-2 font-semibold">
+                <span>Wallet debit</span>
+                <span>{formatNaira(totalDebit)}</span>
+              </div>
+              {totalDebit > balance ? (
+                <p className="mt-2 text-xs text-danger">
+                  Insufficient balance ({formatNaira(balance)} available)
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
           <Field label="Narration">
             <Input
               value={form.narration}
@@ -246,7 +291,12 @@ export function WalletPanel() {
 
           <Button
             className="w-full"
-            disabled={transferring || !accountVerified || verifying}
+            disabled={
+              transferring ||
+              !accountVerified ||
+              verifying ||
+              (totalDebit !== null && totalDebit > balance)
+            }
           >
             {transferring ? "Sending…" : "Withdraw"}
           </Button>
@@ -271,6 +321,12 @@ export function WalletPanel() {
                     {tx.category.replaceAll("_", " ")}
                   </p>
                   <p className="text-xs text-muted">{tx.reference}</p>
+                  {tx.withdrawal_fee != null && tx.transfer_amount != null ? (
+                    <p className="mt-0.5 text-xs text-muted">
+                      Bank {formatNaira(tx.transfer_amount)} + fee{" "}
+                      {formatNaira(tx.withdrawal_fee)}
+                    </p>
+                  ) : null}
                 </div>
                 <p
                   className={

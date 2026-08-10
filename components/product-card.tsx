@@ -41,7 +41,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-white transition duration-200 hover:-translate-y-0.5 hover:border-brand/30 hover:shadow-[0_4px_12px_rgba(10,42,107,0.08)]",
+        "group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-white transition duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-[0_4px_12px_rgba(11,61,46,0.08)]",
         className,
       )}
     >
@@ -73,7 +73,7 @@ export function ProductCard({
       <div className="mt-auto space-y-2 px-3 pb-3 pt-2">
         <div className="flex items-end justify-between gap-2">
           <div className="min-w-0">
-            <p className="display-font text-base font-semibold tracking-tight">
+            <p className="display-font text-base font-semibold tracking-tight text-accent">
               {formatNaira(total)}
             </p>
             {outOfStock ? (
@@ -86,7 +86,7 @@ export function ProductCard({
             type="button"
             disabled={outOfStock || isLoading}
             aria-label="Add to cart"
-            className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 active:scale-95"
+            className="grid size-9 shrink-0 place-items-center rounded-lg bg-accent text-white transition hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50 active:scale-95"
             onClick={async () => {
               try {
                 await addItem(1);
@@ -102,7 +102,7 @@ export function ProductCard({
         <button
           type="button"
           disabled={outOfStock || isLoading}
-          className="h-9 w-full rounded-lg border border-brand text-sm font-semibold text-brand transition hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-50"
+          className="h-9 w-full rounded-lg bg-brand text-sm font-semibold text-white transition hover:bg-brand-strong disabled:cursor-not-allowed disabled:opacity-50"
           onClick={async () => {
             try {
               await buyNow();

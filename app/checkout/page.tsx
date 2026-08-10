@@ -237,6 +237,26 @@ export default function CheckoutPage() {
                   : { recipient_address: form.recipient_address }),
                 redirect_url,
               }).unwrap();
+              const trackingCode =
+                res.payment?.payment?.tracking_code ||
+                res.tracking_code ||
+                res.orders?.[0]?.tracking_code ||
+                "";
+              const txRef =
+                res.payment?.payment?.tx_ref || res.payment_tx_ref || "";
+              try {
+                if (trackingCode) {
+                  sessionStorage.setItem(
+                    "sell4me_tracking_code",
+                    trackingCode,
+                  );
+                }
+                if (txRef) {
+                  sessionStorage.setItem("sell4me_tx_ref", txRef);
+                }
+              } catch {
+                /* ignore private mode */
+              }
               const link =
                 res.payment?.flutterwave?.data?.link ||
                 (res.payment?.flutterwave as { link?: string } | undefined)
@@ -246,7 +266,10 @@ export default function CheckoutPage() {
                 return;
               }
               toast.success(res.message || "Order created");
-              window.location.href = `/checkout/complete?tx_ref=${res.payment?.payment?.tx_ref || ""}`;
+              const q = new URLSearchParams();
+              if (txRef) q.set("tx_ref", txRef);
+              if (trackingCode) q.set("tracking_code", trackingCode);
+              window.location.href = `/checkout/complete?${q.toString()}`;
             } catch (err) {
               toast.error(getErrorMessage(err, "Checkout failed"));
             }
@@ -304,8 +327,8 @@ export default function CheckoutPage() {
                     className={cn(
                       "rounded-xl border p-4 text-left transition",
                       selected
-                        ? "border-brand bg-brand-soft/40 shadow-[0_0_0_1px_rgba(0,102,255,0.25)]"
-                        : "border-border bg-white hover:border-brand/40",
+                        ? "border-accent bg-accent-soft/50 shadow-[0_0_0_1px_rgba(255,122,69,0.35)]"
+                        : "border-border bg-white hover:border-accent/40",
                     )}
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -431,6 +454,7 @@ export default function CheckoutPage() {
             <Button
               className="w-full"
               size="lg"
+              variant="accent"
               disabled={
                 isLoading ||
                 (useLocker && (!lockerId || lockerAvailable === false))
@@ -488,7 +512,7 @@ export default function CheckoutPage() {
           ) : null}
           <div className="flex justify-between border-t border-border pt-3 text-base font-semibold">
             <dt>Grand total</dt>
-            <dd className="text-brand">{formatNaira(grand)}</dd>
+            <dd className="text-accent">{formatNaira(grand)}</dd>
           </div>
         </dl>
         <p className="mt-4 text-xs leading-relaxed text-muted">
