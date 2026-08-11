@@ -9,7 +9,7 @@ import { Modal } from "@/components/modal";
 import { OrderViewModal } from "@/components/order-actions";
 import { Button, EmptyState } from "@/components/ui";
 import { getErrorMessage } from "@/lib/axios";
-import type { NotificationItem, Order } from "@/lib/types";
+import type { NotificationItem } from "@/lib/types";
 import {
   useListNotificationsQuery,
   useMarkAllNotificationsReadMutation,
@@ -165,20 +165,9 @@ export default function MerchantNotificationsPage() {
       </Modal>
 
       <OrderViewModal
-        order={
-          {
-            id: orderId || "",
-            store_name: "",
-            status: "pending",
-            payment_status: "pending",
-            items: [],
-            subtotal: 0,
-            total: 0,
-          } as Order
-        }
+        orderId={orderId || undefined}
         open={Boolean(orderId)}
         onClose={() => setOrderId(null)}
-        fetchDetails
       />
     </DashboardShell>
   );

@@ -92,25 +92,29 @@ export function PartnerOrderRowActions({ order }: { order: Order }) {
 
 export function OrderViewModal({
   order: listed,
+  orderId,
   open,
   onClose,
   onUpdate,
   fetchDetails = false,
   partner = false,
 }: {
-  order: Order;
+  order?: Order;
+  orderId?: string;
   open: boolean;
   onClose: () => void;
   onUpdate?: () => void;
   fetchDetails?: boolean;
   partner?: boolean;
 }) {
-  const { data, isFetching } = useGetOrderQuery(listed.id, {
-    skip: !open || !fetchDetails,
+  const id = listed?.id || orderId || "";
+  const shouldFetch = Boolean(open && id && (fetchDetails || !listed));
+  const { data, isFetching } = useGetOrderQuery(id, {
+    skip: !shouldFetch,
   });
   const order = data?.order ?? listed;
-  const { data: fezTracking } = useTrackFezOrderQuery(order.fez_order_no || "", {
-    skip: !open || !order.fez_order_no,
+  const { data: fezTracking } = useTrackFezOrderQuery(order?.fez_order_no || "", {
+    skip: !open || !order?.fez_order_no,
   });
 
   return (
@@ -118,8 +122,8 @@ export function OrderViewModal({
       open={open}
       onClose={onClose}
       size="lg"
-      title={`Order #${order.id.slice(0, 8)}`}
-      description={order.store_name}
+      title={`Order #${(order?.id || id).slice(0, 8)}`}
+      description={order?.store_name}
       footer={
         <>
           <Button type="button" variant="secondary" onClick={onClose}>
@@ -133,7 +137,7 @@ export function OrderViewModal({
         </>
       }
     >
-      {isFetching && fetchDetails ? (
+      {isFetching || !order ? (
         <div className="flex justify-center py-10">
           <Spinner className="size-8" />
         </div>
