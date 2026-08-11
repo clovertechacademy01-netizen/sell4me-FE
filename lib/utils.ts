@@ -5,6 +5,15 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/** Title-case labels from snake_case or lowercase copy. */
+export function formatTitle(value: string | undefined | null) {
+  return String(value || "")
+    .replaceAll("_", " ")
+    .replaceAll("-", " ")
+    .trim()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 export function formatNaira(amount: number | undefined | null) {
   const value = Number(amount ?? 0);
   return new Intl.NumberFormat("en-NG", {

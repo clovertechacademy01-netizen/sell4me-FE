@@ -176,11 +176,11 @@ export default function CheckoutPage() {
     return (
       <div className="container-page py-16">
         <EmptyState
-          title="Nothing to checkout"
+          title="Nothing To Checkout"
           description="Add products to your cart first."
           action={
             <Link href="/">
-              <Button>Go home</Button>
+              <Button>Go Home</Button>
             </Link>
           }
         />
@@ -460,7 +460,7 @@ export default function CheckoutPage() {
                 (useLocker && (!lockerId || lockerAvailable === false))
               }
             >
-              {isLoading ? "Placing order…" : "Pay with Flutterwave"}
+              {isLoading ? "Placing Order…" : "Pay With Flutterwave"}
             </Button>
           </div>
         </form>

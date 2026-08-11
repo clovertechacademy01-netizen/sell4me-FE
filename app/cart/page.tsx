@@ -44,7 +44,7 @@ export default function CartPage() {
     return (
       <div className="container-page py-16">
         <EmptyState
-          title="Your cart is empty"
+          title="Your Cart Is Empty"
           description="Open a partner link or store to start shopping — no account needed."
           action={
             <Link href="/">

@@ -22,7 +22,7 @@ function ResetInner() {
 
   return (
     <AuthShell
-      title="Choose a new password"
+      title="Choose A New Password"
       description="Use the OTP from your email, then set a strong new password."
       footer={
         <Link href="/auth/login" className="font-medium text-accent hover:underline">

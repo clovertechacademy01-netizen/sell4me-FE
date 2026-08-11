@@ -24,7 +24,7 @@ function VerifyInner() {
 
   return (
     <AuthShell
-      title="Verify your email"
+      title="Verify Your Email"
       description="Enter the 6-digit code we sent to your inbox."
       footer={
         <Link href="/auth/login" className="font-medium text-accent hover:underline">

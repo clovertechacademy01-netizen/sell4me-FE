@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { DashboardShell } from "@/components/dashboard-shell";
+import { ProductRowActions } from "@/components/product-actions";
 import { StatusBadge } from "@/components/product-card";
 import { Button, EmptyState } from "@/components/ui";
 import { getErrorMessage } from "@/lib/axios";
@@ -24,17 +25,17 @@ export default function MerchantProductsPage() {
       subtitle="Manage inventory, pricing, and partner commission percentages."
       action={
         <Link href="/merchant/products/new">
-          <Button>Add product</Button>
+          <Button>Add Product</Button>
         </Link>
       }
     >
       {items.length === 0 ? (
         <EmptyState
-          title="No products yet"
+          title="No Products Yet"
           description="Create your first product with price, stock, and commission %."
           action={
             <Link href="/merchant/products/new">
-              <Button>Add product</Button>
+              <Button>Add Product</Button>
             </Link>
           }
         />
@@ -48,7 +49,7 @@ export default function MerchantProductsPage() {
                 <th>Commission</th>
                 <th>Stock</th>
                 <th>Status</th>
-                <th />
+                <th className="text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -62,12 +63,7 @@ export default function MerchantProductsPage() {
                     <StatusBadge status={item.status} />
                   </td>
                   <td className="text-right">
-                    <Link
-                      href={`/merchant/products/${item.id}`}
-                      className="font-medium text-accent hover:underline"
-                    >
-                      Edit
-                    </Link>
+                    <ProductRowActions product={item} />
                   </td>
                 </tr>
               ))}

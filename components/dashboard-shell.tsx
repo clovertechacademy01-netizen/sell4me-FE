@@ -248,7 +248,7 @@ export function DashboardShell({
             >
               <Menu className="size-5 text-brand" />
             </button>
-            <h1 className="display-font text-xl font-bold tracking-tight text-brand sm:text-2xl">
+            <h1 className="display-font text-xl font-bold capitalize tracking-tight text-brand sm:text-2xl">
               {title}
             </h1>
           </div>

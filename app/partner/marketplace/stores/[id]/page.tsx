@@ -123,7 +123,7 @@ export default function PartnerStoreDetailPage() {
                     ) : (
                       <Copy className="size-4" />
                     )}
-                    Copy link
+                    Copy Link
                   </button>
                 ) : (
                   <button
@@ -137,7 +137,7 @@ export default function PartnerStoreDetailPage() {
                     ) : (
                       <Link2 className="size-4" />
                     )}
-                    Generate link
+                    Generate Link
                   </button>
                 )}
               </div>

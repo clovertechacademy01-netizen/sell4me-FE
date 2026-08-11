@@ -4,16 +4,14 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DashboardShell } from "@/components/dashboard-shell";
+import { OrderStatusModal } from "@/components/order-actions";
 import { StatusBadge } from "@/components/product-card";
 import { Button, Spinner } from "@/components/ui";
-import { Select } from "@/components/select";
 import { getErrorMessage } from "@/lib/axios";
-import type { OrderStatus } from "@/lib/types";
 import { formatNaira } from "@/lib/utils";
 import {
   useGetOrderQuery,
   useTrackFezOrderQuery,
-  useUpdateOrderStatusMutation,
 } from "@/store/api/sell4meApi";
 
 export default function MerchantOrderDetailPage() {
@@ -21,17 +19,11 @@ export default function MerchantOrderDetailPage() {
   const { data, isLoading, error } = useGetOrderQuery(params.id, {
     skip: !params.id,
   });
-  const [updateOrderStatus, { isLoading: saving }] =
-    useUpdateOrderStatusMutation();
   const order = data?.order;
   const { data: fezTracking } = useTrackFezOrderQuery(order?.fez_order_no || "", {
     skip: !order?.fez_order_no,
   });
-  const [status, setStatus] = useState<OrderStatus>("pending");
-
-  useEffect(() => {
-    if (order) setStatus(order.status);
-  }, [order]);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     if (error) toast.error(getErrorMessage(error, "Failed to load order"));
@@ -49,42 +41,12 @@ export default function MerchantOrderDetailPage() {
 
   return (
     <DashboardShell
-      title="Order detail"
+      title="Order Detail"
       subtitle={order.id}
       action={
-        <div className="flex gap-2">
-          <Select
-            className="w-40"
-            value={status}
-            onChange={(e) => setStatus(e.target.value as OrderStatus)}
-          >
-            {[
-              "pending",
-              "confirmed",
-              "processing",
-              "shipped",
-              "delivered",
-              "cancelled",
-            ].map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </Select>
-          <Button
-            disabled={saving}
-            onClick={async () => {
-              try {
-                await updateOrderStatus({ id: order.id, status }).unwrap();
-                toast.success("Status updated");
-              } catch (err) {
-                toast.error(getErrorMessage(err, "Update failed"));
-              }
-            }}
-          >
-            Save
-          </Button>
-        </div>
+        <Button variant="secondary" onClick={() => setUpdating(true)}>
+          Update Status
+        </Button>
       }
     >
       <div className="grid gap-4 lg:grid-cols-3">
@@ -172,6 +134,11 @@ export default function MerchantOrderDetailPage() {
           </div>
         </div>
       </div>
+      <OrderStatusModal
+        order={order}
+        open={updating}
+        onClose={() => setUpdating(false)}
+      />
     </DashboardShell>
   );
 }

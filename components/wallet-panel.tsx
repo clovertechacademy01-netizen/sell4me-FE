@@ -1,11 +1,16 @@
 "use client";
 
+import { Eye } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { ActionMenu } from "@/components/action-menu";
+import { Modal } from "@/components/modal";
+import { StatusBadge } from "@/components/product-card";
 import { Button, Field, Input, Spinner } from "@/components/ui";
+import type { WalletTransaction } from "@/lib/types";
 import { Select } from "@/components/select";
 import { getErrorMessage } from "@/lib/axios";
-import { formatNaira } from "@/lib/utils";
+import { formatNaira, formatTitle } from "@/lib/utils";
 import {
   useGetWalletQuery,
   useListBanksQuery,
@@ -20,9 +25,13 @@ type Bank = { code: string; name: string };
 const WITHDRAWAL_FEE = 1000;
 
 export function WalletPanel() {
+  const [pollMs, setPollMs] = useState(0);
   const { data: walletData, error: walletError, isLoading: walletLoading } =
-    useGetWalletQuery();
-  const { data: txData } = useListWalletTransactionsQuery({ limit: 20 });
+    useGetWalletQuery(undefined, { pollingInterval: pollMs });
+  const { data: txData } = useListWalletTransactionsQuery(
+    { limit: 20 },
+    { pollingInterval: pollMs },
+  );
   const { data: banksData, isLoading: banksLoading, error: banksError } =
     useListBanksQuery("NG");
   const [transferFunds, { isLoading: transferring }] =
@@ -42,6 +51,14 @@ export function WalletPanel() {
 
   const wallet = walletData?.wallet ?? null;
   const txs = txData?.items || [];
+  const awaitingBank = txs.some(
+    (tx) => tx.type === "debit" && tx.status === "pending",
+  );
+
+  useEffect(() => {
+    setPollMs(awaitingBank ? 15_000 : 0);
+  }, [awaitingBank]);
+
   const banks = useMemo(() => {
     const list = banksData?.data;
     if (!Array.isArray(list)) return [] as Bank[];
@@ -160,7 +177,7 @@ export function WalletPanel() {
               const chargedDebit = res.total_wallet_debit ?? debit;
               toast.success(
                 res.message ||
-                  `Sent ${formatNaira(res.withdrawal_amount ?? amount)} · fee ${formatNaira(chargedFee)} · debited ${formatNaira(chargedDebit)}`,
+                  `Reserved ${formatNaira(chargedDebit)} (bank ${formatNaira(res.withdrawal_amount ?? amount)} + fee ${formatNaira(chargedFee)}). Waiting for bank confirmation.`,
               );
               setForm((prev) => ({ ...prev, amount: "" }));
             } catch (err) {
@@ -170,12 +187,12 @@ export function WalletPanel() {
         >
           <div>
             <h3 className="display-font font-semibold tracking-tight">
-              Withdraw to bank
+              Withdraw To Bank
             </h3>
             <p className="mt-1 text-xs text-muted">
               Choose a bank, verify the account, then withdraw. A{" "}
-              {formatNaira(WITHDRAWAL_FEE)} platform fee is added to every
-              withdrawal.
+              {formatNaira(WITHDRAWAL_FEE)} fee is added, and the total is
+              reserved until the bank confirms the payout.
             </p>
           </div>
 
@@ -303,32 +320,44 @@ export function WalletPanel() {
         </form>
       </div>
 
-      <div className="surface-card overflow-hidden">
-        <div className="border-b border-border px-5 py-4 display-font font-semibold tracking-tight">
-          Recent transactions
-        </div>
-        <ul className="divide-y divide-border">
-          {txs.length === 0 ? (
-            <li className="px-5 py-8 text-sm text-muted">No transactions yet.</li>
-          ) : (
-            txs.map((tx) => (
-              <li
-                key={tx.id}
-                className="flex items-center justify-between gap-4 px-5 py-4 text-sm"
-              >
-                <div>
+      <WalletTransactionsTable txs={txs} />
+    </div>
+  );
+}
+
+function WalletTransactionsTable({ txs }: { txs: WalletTransaction[] }) {
+  const [viewing, setViewing] = useState<WalletTransaction | null>(null);
+
+  return (
+    <div className="surface-card overflow-hidden">
+      <div className="border-b border-border px-5 py-4 display-font font-semibold tracking-tight">
+        Recent Transactions
+      </div>
+      {txs.length === 0 ? (
+        <p className="px-5 py-8 text-sm text-muted">No transactions yet.</p>
+      ) : (
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Transaction</th>
+              <th>Status</th>
+              <th>Amount</th>
+              <th className="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {txs.map((tx) => (
+              <tr key={tx.id}>
+                <td>
                   <p className="font-medium capitalize">
-                    {tx.category.replaceAll("_", " ")}
+                    {formatTitle(tx.category)}
                   </p>
                   <p className="text-xs text-muted">{tx.reference}</p>
-                  {tx.withdrawal_fee != null && tx.transfer_amount != null ? (
-                    <p className="mt-0.5 text-xs text-muted">
-                      Bank {formatNaira(tx.transfer_amount)} + fee{" "}
-                      {formatNaira(tx.withdrawal_fee)}
-                    </p>
-                  ) : null}
-                </div>
-                <p
+                </td>
+                <td>
+                  {tx.status ? <StatusBadge status={tx.status} /> : "—"}
+                </td>
+                <td
                   className={
                     tx.type === "credit"
                       ? "font-semibold text-success"
@@ -337,12 +366,92 @@ export function WalletPanel() {
                 >
                   {tx.type === "credit" ? "+" : "-"}
                   {formatNaira(tx.amount)}
-                </p>
-              </li>
-            ))
-          )}
-        </ul>
-      </div>
+                </td>
+                <td className="text-right">
+                  <ActionMenu
+                    label={`Actions for ${tx.reference}`}
+                    items={[
+                      {
+                        id: "view",
+                        label: "View",
+                        icon: <Eye className="size-4" />,
+                        onSelect: () => setViewing(tx),
+                      },
+                    ]}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      <Modal
+        open={Boolean(viewing)}
+        onClose={() => setViewing(null)}
+        title={viewing ? formatTitle(viewing.category) : "Transaction"}
+        description={viewing?.reference}
+        footer={
+          <Button type="button" variant="secondary" onClick={() => setViewing(null)}>
+            Close
+          </Button>
+        }
+      >
+        {viewing ? (
+          <dl className="space-y-3 text-sm">
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted">Type</dt>
+              <dd className="capitalize">{viewing.type}</dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted">Status</dt>
+              <dd>
+                <StatusBadge status={viewing.status} />
+              </dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted">Amount</dt>
+              <dd
+                className={
+                  viewing.type === "credit"
+                    ? "font-semibold text-success"
+                    : "font-semibold"
+                }
+              >
+                {viewing.type === "credit" ? "+" : "-"}
+                {formatNaira(viewing.amount)}
+              </dd>
+            </div>
+            {viewing.transfer_amount != null ? (
+              <div className="flex justify-between gap-3">
+                <dt className="text-muted">To bank</dt>
+                <dd>{formatNaira(viewing.transfer_amount)}</dd>
+              </div>
+            ) : null}
+            {viewing.withdrawal_fee != null ? (
+              <div className="flex justify-between gap-3">
+                <dt className="text-muted">Withdrawal fee</dt>
+                <dd>{formatNaira(viewing.withdrawal_fee)}</dd>
+              </div>
+            ) : null}
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted">Balance after</dt>
+              <dd>{formatNaira(viewing.balance_after)}</dd>
+            </div>
+            {viewing.description ? (
+              <div>
+                <dt className="text-muted">Description</dt>
+                <dd className="mt-1">{viewing.description}</dd>
+              </div>
+            ) : null}
+            {viewing.status === "pending" && viewing.type === "debit" ? (
+              <p className="rounded-lg bg-surface-soft px-3 py-2 text-xs text-muted">
+                Reserved — waiting for bank confirmation
+              </p>
+            ) : null}
+          </dl>
+        ) : null}
+      </Modal>
     </div>
   );
 }

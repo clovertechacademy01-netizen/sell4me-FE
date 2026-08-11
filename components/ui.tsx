@@ -96,7 +96,7 @@ export function Label({
   return (
     <label
       className={cn(
-        "mb-1.5 block text-sm font-semibold tracking-[0.01em] text-muted",
+        "mb-1.5 block text-sm font-semibold capitalize tracking-[0.01em] text-muted",
         className,
       )}
       {...props}
@@ -136,7 +136,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold tracking-wide",
+        "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide",
         tone === "brand" && "bg-brand-soft text-brand-strong",
         tone === "accent" && "bg-accent-soft text-accent-strong",
         tone === "success" && "bg-brand-soft text-brand-strong",

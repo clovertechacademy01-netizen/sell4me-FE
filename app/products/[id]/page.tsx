@@ -128,7 +128,7 @@ export default function ProductDetailPage() {
                 }
               }}
             >
-              Add to cart
+              Add To Cart
             </Button>
             <Button
               size="lg"
@@ -147,7 +147,7 @@ export default function ProductDetailPage() {
                 }
               }}
             >
-              Buy now
+              Buy Now
             </Button>
           </div>
         </div>

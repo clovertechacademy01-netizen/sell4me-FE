@@ -96,6 +96,13 @@ export function Select({
         isSearchable={isSearchable}
         isClearable={isClearable}
         placeholder={placeholder}
+        menuPortalTarget={
+          typeof document === "undefined" ? undefined : document.body
+        }
+        menuPosition="fixed"
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: 100 }),
+        }}
         noOptionsMessage={() => "No options found"}
         filterOption={(option, rawInput) => {
           const query = rawInput.trim().toLowerCase();

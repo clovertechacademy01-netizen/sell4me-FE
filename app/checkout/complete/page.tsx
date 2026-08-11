@@ -79,7 +79,7 @@ function CompleteInner() {
         ) : null}
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link href={trackHref}>
-            <Button>Track delivery</Button>
+            <Button>Track Delivery</Button>
           </Link>
           <Link href="/">
             <Button variant="secondary">Back home</Button>

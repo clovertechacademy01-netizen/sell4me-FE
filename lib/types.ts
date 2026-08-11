@@ -219,6 +219,8 @@ export interface Wallet {
   status: string;
 }
 
+export type WalletTransactionStatus = "pending" | "completed" | "failed";
+
 export interface WalletTransaction {
   id: string;
   type: "credit" | "debit";
@@ -230,7 +232,7 @@ export interface WalletTransaction {
   withdrawal_fee?: number;
   balance_after: number;
   currency: string;
-  status: string;
+  status: WalletTransactionStatus | string;
   reference: string;
   order_id?: string;
   description?: string;

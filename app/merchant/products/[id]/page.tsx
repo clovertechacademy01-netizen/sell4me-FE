@@ -80,7 +80,7 @@ export default function EditProductPage() {
 
   if (!ready || loadingProduct) {
     return (
-      <DashboardShell title="Edit product">
+      <DashboardShell title="Edit Product">
         <div className="flex justify-center py-16">
           <Spinner className="size-8" />
         </div>
@@ -90,7 +90,7 @@ export default function EditProductPage() {
 
   return (
     <DashboardShell
-      title="Edit product"
+      title="Edit Product"
       action={
         <Button
           variant="secondary"
@@ -241,7 +241,7 @@ export default function EditProductPage() {
         </Field>
         <div className="flex gap-3">
           <Button disabled={isLoading || uploadingImage}>
-            {isLoading ? "Saving…" : "Save changes"}
+            {isLoading ? "Saving…" : "Save Changes"}
           </Button>
           <Button
             type="button"

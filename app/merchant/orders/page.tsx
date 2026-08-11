@@ -1,15 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DashboardShell } from "@/components/dashboard-shell";
+import { MerchantOrderRowActions, ORDER_STATUSES } from "@/components/order-actions";
 import { StatusBadge } from "@/components/product-card";
 import { EmptyState } from "@/components/ui";
-import { getErrorMessage } from "@/lib/axios";
-import { formatNaira } from "@/lib/utils";
-import { useListOrdersQuery } from "@/store/api/sell4meApi";
 import { Select } from "@/components/select";
+import { getErrorMessage } from "@/lib/axios";
+import { formatNaira, formatTitle } from "@/lib/utils";
+import { useListOrdersQuery } from "@/store/api/sell4meApi";
 
 export default function MerchantOrdersPage() {
   const [status, setStatus] = useState("");
@@ -33,17 +33,10 @@ export default function MerchantOrdersPage() {
           value={status}
           onChange={(e) => setStatus(e.target.value)}
         >
-          <option value="">All statuses</option>
-          {[
-            "pending",
-            "confirmed",
-            "processing",
-            "shipped",
-            "delivered",
-            "cancelled",
-          ].map((s) => (
-            <option key={s} value={s}>
-              {s}
+          <option value="">All Statuses</option>
+          {ORDER_STATUSES.map((item) => (
+            <option key={item} value={item}>
+              {formatTitle(item)}
             </option>
           ))}
         </Select>
@@ -51,37 +44,49 @@ export default function MerchantOrdersPage() {
     >
       {items.length === 0 ? (
         <EmptyState
-          title="No orders yet"
+          title="No Orders Yet"
           description="When customers pay, orders appear here with delivery details."
         />
       ) : (
-        <div className="space-y-3">
-          {items.map((order) => (
-            <Link
-              key={order.id}
-              href={`/merchant/orders/${order.id}`}
-              className="block surface-card p-5 transition hover:border-brand/40"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="font-semibold">{order.store_name}</p>
-                  <p className="mt-1 text-xs text-muted">{order.id}</p>
-                </div>
-                <div className="flex gap-2">
-                  <StatusBadge status={order.status} />
-                  <StatusBadge status={order.payment_status} />
-                </div>
-              </div>
-              <div className="mt-3 flex justify-between text-sm">
-                <span className="text-muted">
-                  {order.items?.length || 0} items · {order.recipient_state}
-                </span>
-                <span className="font-semibold text-accent">
-                  {formatNaira(order.total + (order.delivery_fee || 0))}
-                </span>
-              </div>
-            </Link>
-          ))}
+        <div className="surface-card overflow-hidden">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Store</th>
+                <th>Items</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th className="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((order) => (
+                <tr key={order.id}>
+                  <td className="font-medium">#{order.id.slice(0, 8)}</td>
+                  <td>
+                    <p>{order.store_name}</p>
+                    <p className="text-xs text-muted">
+                      {order.recipient_state || "—"}
+                    </p>
+                  </td>
+                  <td>{order.items?.length || 0}</td>
+                  <td>
+                    <div className="flex flex-wrap gap-1.5">
+                      <StatusBadge status={order.status} />
+                      <StatusBadge status={order.payment_status} />
+                    </div>
+                  </td>
+                  <td className="font-semibold text-accent">
+                    {formatNaira(order.total + (order.delivery_fee || 0))}
+                  </td>
+                  <td className="text-right">
+                    <MerchantOrderRowActions order={order} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </DashboardShell>

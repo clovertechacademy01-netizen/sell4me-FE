@@ -59,7 +59,7 @@ export default function MerchantStorePage() {
 
   return (
     <DashboardShell
-      title="Your store"
+      title="Your Store"
       subtitle="Merchants can operate one store on Sell4Me."
       action={
         store ? (
@@ -94,8 +94,8 @@ export default function MerchantStorePage() {
                   title: "Delete this store?",
                   description:
                     "This deletes the store and all of its products. This action cannot be undone.",
-                  confirmLabel: "Delete store",
-                  cancelLabel: "Keep store",
+                  confirmLabel: "Delete Store",
+                  cancelLabel: "Keep Store",
                   tone: "danger",
                 });
                 if (!confirmed) return;
@@ -115,7 +115,7 @@ export default function MerchantStorePage() {
                 }
               }}
             >
-              Delete store
+              Delete Store
             </Button>
           </div>
         ) : null
@@ -193,7 +193,7 @@ export default function MerchantStorePage() {
           />
         </Field>
         <Button disabled={loading}>
-          {loading ? "Saving…" : store ? "Update store" : "Create store"}
+          {loading ? "Saving…" : store ? "Update Store" : "Create Store"}
         </Button>
       </form>
     </DashboardShell>

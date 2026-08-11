@@ -36,9 +36,10 @@ export function SiteHeader() {
         : "/auth/login";
 
   const links = [
-    { href: "/#how-it-works", label: "How it works" },
-    { href: "/track-delivery", label: "Track order" },
-    { href: "/auth/register", label: "Sell or earn" },
+    { href: "/#how-it-works", label: "How It Works" },
+    { href: "/#for-you", label: "For You" },
+    { href: "/#pricing", label: "Pricing" },
+    { href: "/track-delivery", label: "Track Order" },
   ];
 
   return (
@@ -143,21 +144,21 @@ export function SiteFooter() {
         <div>
           <BrandLockup href="/" />
           <p className="mt-4 max-w-md text-sm leading-relaxed text-muted">
-            Connecting trusted Nigerian merchants with customers through secure
-            partner links.
+            Sell4Me is powered by X Technologies Limited — a product of X
+            Technologies Limited for affiliate commerce in Nigeria.
           </p>
         </div>
         <div>
-          <p className="text-sm font-semibold text-foreground">Quick links</p>
+          <p className="text-sm font-semibold text-foreground">Quick Links</p>
           <div className="mt-4 flex flex-col gap-3 text-sm text-muted">
             <Link href="/auth/register?role=merchant" className="hover:text-accent">
-              Start selling
+              Start Selling
             </Link>
             <Link href="/auth/register?role=partner" className="hover:text-accent">
-              Partner program
+              Partner Program
             </Link>
             <Link href="/track-delivery" className="hover:text-accent">
-              Track order
+              Track Order
             </Link>
           </div>
         </div>
@@ -171,14 +172,15 @@ export function SiteFooter() {
               Your cart
             </Link>
             <Link href="/#how-it-works" className="hover:text-accent">
-              How it works
+              How It Works
             </Link>
           </div>
         </div>
       </div>
       <div className="border-t border-border">
         <p className="container-page py-5 text-xs text-muted">
-          © {new Date().getFullYear()} Sell4Me Limited. All rights reserved.
+          © {new Date().getFullYear()} X Technologies Limited. Sell4Me is a
+          product of X Technologies Limited. All rights reserved.
         </p>
       </div>
     </footer>

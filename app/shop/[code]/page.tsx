@@ -115,7 +115,7 @@ export default function ShopLandingPage() {
                   }
                 }}
               >
-                Add to cart
+                Add To Cart
               </Button>
               <Button
                 size="lg"
@@ -136,7 +136,7 @@ export default function ShopLandingPage() {
                   }
                 }}
               >
-                Buy now
+                Buy Now
               </Button>
               <Link href={`/stores/${data.store.id}`}>
                 <Button size="lg" variant="ghost">
@@ -231,7 +231,7 @@ export default function ShopLandingPage() {
             <ProductGrid products={products} />
           ) : (
             <EmptyState
-              title="No products yet"
+              title="No Products Yet"
               description="This store has not listed any products."
             />
           )}

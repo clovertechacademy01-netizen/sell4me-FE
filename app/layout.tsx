@@ -19,11 +19,11 @@ const display = Bricolage_Grotesque({
 
 export const metadata: Metadata = {
   title: {
-    default: "Sell4Me — Trusted commerce redefined",
+    default: "Sell4Me — Affiliate Commerce For Nigeria",
     template: "%s · Sell4Me",
   },
   description:
-    "Merchants list products, partners share affiliate links, and customers shop without signing up. Pay with Flutterwave and track delivery.",
+    "Sell4Me is a product of X Technologies Limited. Merchants list products, partners share affiliate links, and customers shop as guests.",
 };
 
 export default function RootLayout({

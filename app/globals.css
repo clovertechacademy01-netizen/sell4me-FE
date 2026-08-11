@@ -227,14 +227,26 @@ textarea {
 
 .data-table th {
   padding: 1rem 1.5rem;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .data-table td {
   padding: 1rem 1.5rem;
   border-top: 1px solid var(--border);
+}
+
+.data-table th:last-child,
+.data-table td:last-child {
+  text-align: right;
+  width: 1%;
+  white-space: nowrap;
+}
+
+.data-table td:last-child {
+  vertical-align: middle;
 }
 
 .data-table tbody tr {

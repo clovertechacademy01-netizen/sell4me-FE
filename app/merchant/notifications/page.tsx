@@ -1,12 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { Eye, MailOpen } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { ActionMenu } from "@/components/action-menu";
 import { DashboardShell } from "@/components/dashboard-shell";
+import { Modal } from "@/components/modal";
+import { OrderViewModal } from "@/components/order-actions";
 import { Button, EmptyState } from "@/components/ui";
 import { getErrorMessage } from "@/lib/axios";
-import { cn } from "@/lib/utils";
+import type { NotificationItem, Order } from "@/lib/types";
 import {
   useListNotificationsQuery,
   useMarkAllNotificationsReadMutation,
@@ -21,18 +24,30 @@ function formatWhen(value?: string | null) {
 }
 
 export default function MerchantNotificationsPage() {
-  const router = useRouter();
   const { data, error, isLoading } = useListNotificationsQuery({ limit: 50 });
   const [markAllRead, { isLoading: markingAll }] =
     useMarkAllNotificationsReadMutation();
   const [markRead] = useMarkNotificationReadMutation();
   const items = data?.items || [];
   const unread = data?.unread_count || 0;
+  const [viewing, setViewing] = useState<NotificationItem | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (error)
       toast.error(getErrorMessage(error, "Failed to load notifications"));
   }, [error]);
+
+  const openNotification = async (item: NotificationItem) => {
+    setViewing(item);
+    if (!item.read_at) {
+      try {
+        await markRead(item.id).unwrap();
+      } catch {
+        /* ignore */
+      }
+    }
+  };
 
   return (
     <DashboardShell
@@ -51,7 +66,7 @@ export default function MerchantNotificationsPage() {
             }
           }}
         >
-          Mark all read
+          Mark All Read
         </Button>
       }
     >
@@ -63,51 +78,108 @@ export default function MerchantNotificationsPage() {
           description="Order payment and delivery alerts will show up here."
         />
       ) : (
-        <div className="space-y-3">
-          {items.map((item) => {
-            const when = formatWhen(item.createdAt || item.created_at);
-            const href = item.order_id
-              ? `/merchant/orders/${item.order_id}`
-              : undefined;
-
-            return (
-              <button
-                key={item.id}
-                type="button"
-                className={cn(
-                  "w-full rounded-xl border p-5 text-left transition",
-                  item.read_at
-                    ? "border-border bg-white"
-                    : "border-brand/30 bg-brand-soft/40",
-                )}
-                onClick={async () => {
-                  if (!item.read_at) {
-                    try {
-                      await markRead(item.id).unwrap();
-                    } catch {
-                      /* ignore */
-                    }
-                  }
-                  if (href) router.push(href);
-                }}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <p className="font-semibold">{item.title}</p>
-                  {when ? (
-                    <span className="shrink-0 text-[11px] text-muted">{when}</span>
-                  ) : null}
-                </div>
-                <p className="mt-1 text-sm text-muted">{item.body}</p>
-                {href ? (
-                  <p className="mt-2 text-xs font-medium text-brand">
-                    View order
-                  </p>
-                ) : null}
-              </button>
-            );
-          })}
+        <div className="surface-card overflow-hidden">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Notification</th>
+                <th>When</th>
+                <th>Status</th>
+                <th className="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => {
+                const when = formatWhen(item.createdAt || item.created_at);
+                return (
+                  <tr key={item.id} className={item.read_at ? "" : "bg-brand-soft/30"}>
+                    <td>
+                      <p className="font-medium">{item.title}</p>
+                      <p className="mt-0.5 line-clamp-1 text-xs text-muted">
+                        {item.body}
+                      </p>
+                    </td>
+                    <td className="whitespace-nowrap text-sm text-muted">
+                      {when || "—"}
+                    </td>
+                    <td className="text-sm">
+                      {item.read_at ? "Read" : "Unread"}
+                    </td>
+                    <td className="text-right">
+                      <ActionMenu
+                        label={`Actions for ${item.title}`}
+                        items={[
+                          {
+                            id: "view",
+                            label: "View",
+                            icon: <Eye className="size-4" />,
+                            onSelect: () => void openNotification(item),
+                          },
+                          {
+                            id: "read",
+                            label: "Mark As Read",
+                            icon: <MailOpen className="size-4" />,
+                            disabled: Boolean(item.read_at),
+                            onSelect: () => {
+                              void markRead(item.id)
+                                .unwrap()
+                                .catch(() => undefined);
+                            },
+                          },
+                        ]}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
+
+      <Modal
+        open={Boolean(viewing)}
+        onClose={() => setViewing(null)}
+        title={viewing?.title || "Notification"}
+        description={formatWhen(viewing?.createdAt || viewing?.created_at)}
+        footer={
+          <>
+            <Button type="button" variant="secondary" onClick={() => setViewing(null)}>
+              Close
+            </Button>
+            {viewing?.order_id ? (
+              <Button
+                type="button"
+                onClick={() => {
+                  setOrderId(viewing.order_id || null);
+                  setViewing(null);
+                }}
+              >
+                View order
+              </Button>
+            ) : null}
+          </>
+        }
+      >
+        <p className="text-sm leading-relaxed text-foreground">{viewing?.body}</p>
+      </Modal>
+
+      <OrderViewModal
+        order={
+          {
+            id: orderId || "",
+            store_name: "",
+            status: "pending",
+            payment_status: "pending",
+            items: [],
+            subtotal: 0,
+            total: 0,
+          } as Order
+        }
+        open={Boolean(orderId)}
+        onClose={() => setOrderId(null)}
+        fetchDetails
+      />
     </DashboardShell>
   );
 }

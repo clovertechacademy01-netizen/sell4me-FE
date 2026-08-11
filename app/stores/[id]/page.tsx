@@ -70,7 +70,7 @@ export default function StorePage() {
             <ProductGrid products={products} />
           ) : (
             <EmptyState
-              title="No products yet"
+              title="No Products Yet"
               description="This store has not listed any products."
             />
           )}

@@ -301,7 +301,7 @@ export default function PartnerMarketplacePage() {
           </div>
         ) : stores.length === 0 ? (
           <EmptyState
-            title="No stores yet"
+            title="No Stores Yet"
             description="Active merchant stores will appear here for you to promote."
           />
         ) : (
@@ -324,7 +324,7 @@ export default function PartnerMarketplacePage() {
         </div>
       ) : products.length === 0 ? (
         <EmptyState
-          title="No products yet"
+          title="No Products Yet"
           description="Active products will appear here for you to promote."
         />
       ) : (

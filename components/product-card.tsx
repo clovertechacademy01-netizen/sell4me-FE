@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/axios";
 import { peekAffiliateCode } from "@/lib/session";
 import type { Product } from "@/lib/types";
-import { cn, formatNaira } from "@/lib/utils";
+import { cn, formatNaira, formatTitle } from "@/lib/utils";
 import { useAddCartItemsMutation, useClearCartMutation } from "@/store/api/sell4meApi";
 
 export function ProductCard({
@@ -120,7 +120,10 @@ export function ProductCard({
 
 export function StatusBadge({ status }: { status: string }) {
   const tone =
-    status === "delivered" || status === "paid" || status === "active"
+    status === "delivered" ||
+    status === "paid" ||
+    status === "active" ||
+    status === "completed"
       ? "success"
       : status === "pending"
         ? "warning"
@@ -133,7 +136,7 @@ export function StatusBadge({ status }: { status: string }) {
   return (
     <span
       className={cn(
-        "inline-flex rounded-full px-3 py-1 text-xs font-semibold capitalize tracking-wide",
+        "inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide",
         tone === "success" && "bg-emerald-100 text-emerald-800",
         tone === "warning" && "bg-[#ffdbd0] text-[#832600]",
         tone === "danger" && "bg-[#ffdad6] text-[#93000a]",
@@ -141,7 +144,7 @@ export function StatusBadge({ status }: { status: string }) {
         tone === "neutral" && "bg-surface-high text-muted",
       )}
     >
-      {status.replaceAll("_", " ")}
+      {formatTitle(status)}
     </span>
   );
 }

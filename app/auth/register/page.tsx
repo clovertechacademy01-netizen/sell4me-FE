@@ -39,7 +39,7 @@ function RegisterInner() {
   return (
     <AuthShell
       wide
-      title="Create your account"
+      title="Create Your Account"
       description={roleCopy}
       footer={
         <>

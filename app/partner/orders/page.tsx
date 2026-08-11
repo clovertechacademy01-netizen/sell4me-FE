@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { DashboardShell } from "@/components/dashboard-shell";
+import { PartnerOrderRowActions } from "@/components/order-actions";
 import { StatusBadge } from "@/components/product-card";
 import { EmptyState } from "@/components/ui";
 import { getErrorMessage } from "@/lib/axios";
@@ -19,39 +20,47 @@ export default function PartnerOrdersPage() {
 
   return (
     <DashboardShell
-      title="Attributed orders"
+      title="Attributed Orders"
       subtitle="Commission credits when these orders are delivered and paid."
     >
       {items.length === 0 ? (
         <EmptyState
-          title="No attributed orders"
+          title="No Attributed Orders"
           description="When shoppers buy through your links, orders show up here."
         />
       ) : (
-        <div className="space-y-3">
-          {items.map((order) => (
-            <div
-              key={order.id}
-              className="surface-card p-5"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="font-semibold">{order.store_name}</p>
-                  <p className="mt-1 text-xs text-muted">{order.id}</p>
-                </div>
-                <div className="flex gap-2">
-                  <StatusBadge status={order.status} />
-                  <StatusBadge status={order.payment_status} />
-                </div>
-              </div>
-              <div className="mt-3 flex justify-between text-sm">
-                <span className="text-muted">Your commission</span>
-                <span className="font-semibold text-accent">
-                  {formatNaira(order.total_commission || 0)}
-                </span>
-              </div>
-            </div>
-          ))}
+        <div className="surface-card overflow-hidden">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Store</th>
+                <th>Status</th>
+                <th>Commission</th>
+                <th className="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((order) => (
+                <tr key={order.id}>
+                  <td className="font-medium">#{order.id.slice(0, 8)}</td>
+                  <td>{order.store_name}</td>
+                  <td>
+                    <div className="flex flex-wrap gap-1.5">
+                      <StatusBadge status={order.status} />
+                      <StatusBadge status={order.payment_status} />
+                    </div>
+                  </td>
+                  <td className="font-semibold text-accent">
+                    {formatNaira(order.total_commission || 0)}
+                  </td>
+                  <td className="text-right">
+                    <PartnerOrderRowActions order={order} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </DashboardShell>

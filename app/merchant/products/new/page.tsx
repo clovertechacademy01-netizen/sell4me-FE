@@ -66,7 +66,7 @@ export default function NewProductPage() {
 
   return (
     <DashboardShell
-      title="Add products"
+      title="Add Products"
       subtitle="Add one or more products in a single submission. Commission % is the partner share of the list price on attributed sales — it is not added to what customers pay."
     >
       <form

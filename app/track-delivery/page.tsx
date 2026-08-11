@@ -49,7 +49,7 @@ function TrackInner() {
     <div className="container-page space-y-8 py-10">
       <FadeIn>
         <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
-          Track delivery
+          Track Delivery
         </h1>
         <p className="mt-2 max-w-xl text-sm text-muted">
           Use the secure link from your checkout email, or look up with email plus
@@ -135,7 +135,7 @@ function TrackInner() {
               </div>
             </details>
             <Button disabled={loading}>
-              {loading ? "Searching…" : "Look up"}
+              {loading ? "Searching…" : "Look Up"}
             </Button>
           </form>
         </FadeIn>

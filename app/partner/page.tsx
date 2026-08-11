@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { Link2, Plus, ShoppingBag, Store, Wallet } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard-shell";
+import { PartnerOrderRowActions } from "@/components/order-actions";
+import { StatusBadge } from "@/components/product-card";
 import { Button, StatCard } from "@/components/ui";
 import { formatNaira } from "@/lib/utils";
 import {
@@ -80,13 +82,13 @@ export default function PartnerHomePage() {
       <section className="overflow-hidden rounded-xl border border-border bg-white">
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <h2 className="display-font text-lg font-semibold tracking-tight">
-            Recent attributed orders
+            Recent Attributed Orders
           </h2>
           <Link
             href="/partner/orders"
             className="text-sm font-semibold text-accent hover:underline"
           >
-            View all
+            View All
           </Link>
         </div>
         {recentOrders.length === 0 ? (
@@ -102,7 +104,8 @@ export default function PartnerHomePage() {
                   <th>Order</th>
                   <th>Store</th>
                   <th>Status</th>
-                  <th className="text-right">Amount</th>
+                  <th>Amount</th>
+                  <th className="text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -110,11 +113,14 @@ export default function PartnerHomePage() {
                   <tr key={order.id}>
                     <td className="font-medium">#{order.id.slice(0, 8)}</td>
                     <td className="text-muted">{order.store_name || "—"}</td>
-                    <td className="capitalize text-muted">
-                      {order.status.replaceAll("_", " ")}
+                    <td>
+                      <StatusBadge status={order.status} />
                     </td>
-                    <td className="text-right font-semibold">
+                    <td className="font-semibold">
                       {formatNaira(order.total)}
+                    </td>
+                    <td className="text-right">
+                      <PartnerOrderRowActions order={order} />
                     </td>
                   </tr>
                 ))}
