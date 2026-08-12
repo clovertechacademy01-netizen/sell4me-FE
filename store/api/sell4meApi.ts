@@ -6,19 +6,16 @@ import type {
   CheckoutResponse,
   DeliveryEstimate,
   FezLockersResponse,
-  FezState,
   FezTrackingResponse,
   NotificationItem,
   Order,
   Pagination,
-  PaymentRecord,
   Product,
   ProductCategory,
   RelatedStoreCatalog,
   Store,
   TrackingOrder,
   User,
-  UserDevice,
   Wallet,
   WalletTransaction,
 } from "@/lib/types";
@@ -113,31 +110,6 @@ export const sell4meApi = createApi({
       query: () => ({ url: "/api/v1/auth/me" }),
       providesTags: ["Auth"],
     }),
-    listDevices: builder.query<{ devices: UserDevice[] }, void>({
-      query: () => ({ url: "/api/v1/auth/devices" }),
-      providesTags: ["Auth"],
-    }),
-    blockDevice: builder.mutation<
-      { message: string; device: UserDevice },
-      { deviceId: string }
-    >({
-      query: ({ deviceId }) => ({
-        url: `/api/v1/auth/devices/${deviceId}/block`,
-        method: "POST",
-      }),
-      invalidatesTags: ["Auth"],
-    }),
-    blockDeviceByToken: builder.mutation<
-      { message: string; device: UserDevice },
-      { token: string }
-    >({
-      query: (body) => ({
-        url: "/api/v1/auth/devices/block-by-token",
-        method: "POST",
-        data: body,
-        auth: false,
-      }),
-    }),
 
     // Public catalog / cart / checkout
     getAffiliate: builder.query<
@@ -181,28 +153,6 @@ export const sell4meApi = createApi({
         }
       },
     }),
-    listPublicCategories: builder.query<{ items: ProductCategory[] }, void>({
-      query: () => ({
-        url: "/api/v1/public/categories",
-        auth: false,
-      }),
-    }),
-    listPublicProducts: builder.query<
-      { items: Product[]; pagination: Pagination },
-      {
-        page?: number;
-        limit?: number;
-        category_id?: string;
-        store_id?: string;
-        exclude_store_id?: string;
-      } | void
-    >({
-      query: (params) => ({
-        url: "/api/v1/public/products",
-        auth: false,
-        params: params || undefined,
-      }),
-    }),
     getPublicProduct: builder.query<
       {
         product: Product;
@@ -218,21 +168,6 @@ export const sell4meApi = createApi({
         auth: false,
       }),
     }),
-    listPublicStores: builder.query<
-      { items: RelatedStoreCatalog[]; pagination: Pagination },
-      {
-        page?: number;
-        limit?: number;
-        product_category?: string;
-        exclude_store_id?: string;
-      } | void
-    >({
-      query: (params) => ({
-        url: "/api/v1/public/stores",
-        auth: false,
-        params: params || undefined,
-      }),
-    }),
     getPublicStore: builder.query<
       {
         store: Store;
@@ -244,30 +179,6 @@ export const sell4meApi = createApi({
     >({
       query: (id) => ({
         url: `/api/v1/public/stores/${id}`,
-        auth: false,
-      }),
-    }),
-    getPublicRelatedProducts: builder.query<
-      {
-        similar_products: Product[];
-        general_products: Product[];
-      },
-      string
-    >({
-      query: (id) => ({
-        url: `/api/v1/public/products/${id}/related`,
-        auth: false,
-      }),
-    }),
-    getPublicRelatedStores: builder.query<
-      {
-        similar_stores: RelatedStoreCatalog[];
-        general_stores: RelatedStoreCatalog[];
-      },
-      string
-    >({
-      query: (id) => ({
-        url: `/api/v1/public/stores/${id}/related`,
         auth: false,
       }),
     }),
@@ -592,13 +503,6 @@ export const sell4meApi = createApi({
       query: () => ({ url: "/api/v1/partner/affiliate-links" }),
       providesTags: ["PartnerLink"],
     }),
-    getAffiliateLink: builder.query<
-      { message: string; affiliate_link: AffiliateLink },
-      string
-    >({
-      query: (id) => ({ url: `/api/v1/partner/affiliate-links/${id}` }),
-      providesTags: (_r, _e, id) => [{ type: "PartnerLink", id }],
-    }),
     listPartnerOrders: builder.query<
       { items: Order[]; pagination: Pagination },
       { page?: number; limit?: number; status?: string } | void
@@ -679,20 +583,6 @@ export const sell4meApi = createApi({
       }),
       invalidatesTags: ["Wallet"],
     }),
-    listPayments: builder.query<
-      { items: PaymentRecord[]; pagination: Pagination },
-      { page?: number; limit?: number; status?: string } | void
-    >({
-      query: (params) => ({
-        url: "/api/v1/payments",
-        params: params || undefined,
-      }),
-    }),
-    verifyCheckoutPayment: builder.query<Record<string, unknown>, string>({
-      query: (tx_ref) => ({
-        url: `/api/v1/payments/flutterwave/verify/${tx_ref}`,
-      }),
-    }),
 
     // Notifications
     listNotifications: builder.query<
@@ -732,11 +622,6 @@ export const sell4meApi = createApi({
     }),
 
     // Fez delivery
-    listFezStates: builder.query<FezState[] | { items?: FezState[] }, void>({
-      query: () => ({
-        url: "/api/v1/delivery/fez/states",
-      }),
-    }),
     trackFezOrder: builder.query<FezTrackingResponse, string>({
       query: (orderNo) => ({
         url: `/api/v1/delivery/fez/orders/${orderNo}/track`,
@@ -774,19 +659,10 @@ export const {
   useResendOtpMutation,
   useMeQuery,
   useLazyMeQuery,
-  useListDevicesQuery,
-  useBlockDeviceMutation,
-  useBlockDeviceByTokenMutation,
   useGetAffiliateQuery,
-  useListPublicCategoriesQuery,
-  useListPublicProductsQuery,
   useGetPublicProductQuery,
-  useListPublicStoresQuery,
   useGetPublicStoreQuery,
-  useGetPublicRelatedProductsQuery,
-  useGetPublicRelatedStoresQuery,
   useGetCartQuery,
-  useLazyGetCartQuery,
   useAddCartItemsMutation,
   useUpdateCartItemMutation,
   useRemoveCartItemMutation,
@@ -817,20 +693,16 @@ export const {
   useUpdateOrderStatusMutation,
   useCreateAffiliateLinkMutation,
   useListAffiliateLinksQuery,
-  useGetAffiliateLinkQuery,
   useListPartnerOrdersQuery,
   useGetWalletQuery,
   useListWalletTransactionsQuery,
   useListBanksQuery,
   useVerifyBankAccountMutation,
   useTransferFundsMutation,
-  useListPaymentsQuery,
-  useVerifyCheckoutPaymentQuery,
   useListNotificationsQuery,
   useUnreadNotificationCountQuery,
   useMarkNotificationReadMutation,
   useMarkAllNotificationsReadMutation,
-  useListFezStatesQuery,
   useTrackFezOrderQuery,
   useUploadFileMutation,
 } = sell4meApi;

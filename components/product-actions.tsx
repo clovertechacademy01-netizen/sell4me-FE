@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Ban, Eye, Pencil, PlayCircle } from "lucide-react";
+import { Ban, Eye, Pencil, PlayCircle, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ActionMenu } from "@/components/action-menu";
@@ -16,6 +16,7 @@ import type { Product } from "@/lib/types";
 import { formatNaira } from "@/lib/utils";
 import {
   useActivateProductMutation,
+  useDeleteProductMutation,
   useListProductCategoriesQuery,
   useSuspendProductMutation,
   useUpdateProductMutation,
@@ -50,7 +51,8 @@ export function ProductRowActions({ product }: { product: Product }) {
     useSuspendProductMutation();
   const [activateProduct, { isLoading: activating }] =
     useActivateProductMutation();
-  const busy = suspending || activating;
+  const [deleteProduct, { isLoading: deleting }] = useDeleteProductMutation();
+  const busy = suspending || activating || deleting;
   const isActive = product.status === "active";
 
   const changeStatus = async (next: "suspend" | "activate") => {
@@ -77,6 +79,24 @@ export function ProductRowActions({ product }: { product: Product }) {
       );
     } catch (err) {
       toast.error(getErrorMessage(err, "Could not update product status"));
+    }
+  };
+
+  const removeProduct = async () => {
+    const confirmed = await confirmAction({
+      title: `Delete ${product.name}?`,
+      description:
+        "This permanently removes the product from your storefront. This action cannot be undone.",
+      confirmLabel: "Delete Product",
+      cancelLabel: "Keep Product",
+      tone: "danger",
+    });
+    if (!confirmed) return;
+    try {
+      await deleteProduct(product.id).unwrap();
+      toast.success("Product deleted");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Delete failed"));
     }
   };
 
@@ -111,6 +131,14 @@ export function ProductRowActions({ product }: { product: Product }) {
             icon: <PlayCircle className="size-4" />,
             disabled: isActive || busy,
             onSelect: () => void changeStatus("activate"),
+          },
+          {
+            id: "delete",
+            label: deleting ? "Deleting…" : "Delete",
+            icon: <Trash2 className="size-4" />,
+            disabled: busy,
+            tone: "danger",
+            onSelect: () => void removeProduct(),
           },
         ]}
       />
