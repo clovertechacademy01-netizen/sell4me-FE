@@ -36,6 +36,21 @@ function LoginInner() {
           try {
             const res = await login(form).unwrap();
             toast.success("Signed in");
+            if (res.user.reactivated) {
+              toast.info("Welcome back — your account has been reactivated.");
+            } else if (
+              res.user.inactive_days != null &&
+              res.user.inactive_days >= 7
+            ) {
+              toast.info(
+                `Welcome back — it's been ${res.user.inactive_days} days since your last visit.`,
+              );
+            }
+            if (res.device?.is_new_device) {
+              toast.info(
+                `New sign-in from ${res.device.device_name} (${res.device.location_label}).`,
+              );
+            }
             const next = params.get("next");
             if (next) {
               router.replace(next);

@@ -7,6 +7,7 @@ import type {
   DeliveryEstimate,
   FezLockersResponse,
   FezTrackingResponse,
+  LoginDeviceInfo,
   NotificationItem,
   Order,
   Pagination,
@@ -62,6 +63,7 @@ export const sell4meApi = createApi({
       {
         message: string;
         user: User;
+        device: LoginDeviceInfo;
         access_token?: string;
         refresh_token?: string;
       },
@@ -114,6 +116,7 @@ export const sell4meApi = createApi({
     // Public catalog / cart / checkout
     getAffiliate: builder.query<
       | {
+          affiliate_link: AffiliateLink;
           type: "product";
           product: Product;
           store: Store;
@@ -126,6 +129,7 @@ export const sell4meApi = createApi({
           };
         }
       | {
+          affiliate_link: AffiliateLink;
           type: "store";
           store: Store;
           store_products: Product[];
@@ -401,7 +405,7 @@ export const sell4meApi = createApi({
       }),
       providesTags: ["Product"],
     }),
-    getProduct: builder.query<{ message: string; product: Product }, string>({
+    getProduct: builder.query<{ product: Product }, string>({
       query: (id) => ({ url: `/api/v1/products/${id}` }),
       providesTags: (_r, _e, id) => [{ type: "Product", id }],
     }),
@@ -475,17 +479,6 @@ export const sell4meApi = createApi({
       query: (id) => ({ url: `/api/v1/orders/${id}` }),
       providesTags: (_r, _e, id) => [{ type: "Order", id }],
     }),
-    updateOrderStatus: builder.mutation<
-      { message: string; order: Order },
-      { id: string; status: string }
-    >({
-      query: ({ id, status }) => ({
-        url: `/api/v1/orders/${id}/status`,
-        method: "PATCH",
-        data: { status },
-      }),
-      invalidatesTags: ["Order"],
-    }),
 
     // Partner
     createAffiliateLink: builder.mutation<
@@ -526,6 +519,15 @@ export const sell4meApi = createApi({
       query: (params) => ({
         url: "/api/v1/wallet/transactions",
         params: params || undefined,
+      }),
+      providesTags: ["Wallet"],
+    }),
+    getWithdrawalByReference: builder.query<
+      { message: string; transaction: WalletTransaction },
+      string
+    >({
+      query: (reference) => ({
+        url: `/api/v1/wallet/withdrawals/${reference}`,
       }),
       providesTags: ["Wallet"],
     }),
@@ -690,12 +692,12 @@ export const {
   useActivateProductMutation,
   useListOrdersQuery,
   useGetOrderQuery,
-  useUpdateOrderStatusMutation,
   useCreateAffiliateLinkMutation,
   useListAffiliateLinksQuery,
   useListPartnerOrdersQuery,
   useGetWalletQuery,
   useListWalletTransactionsQuery,
+  useGetWithdrawalByReferenceQuery,
   useListBanksQuery,
   useVerifyBankAccountMutation,
   useTransferFundsMutation,

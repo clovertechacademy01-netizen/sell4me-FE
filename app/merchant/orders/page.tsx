@@ -26,7 +26,7 @@ export default function MerchantOrdersPage() {
   return (
     <DashboardShell
       title="Orders"
-      subtitle="Paid orders need fulfilment. Payouts credit when delivery completes."
+      subtitle="Status updates automatically after payment and Fez delivery events."
       action={
         <Select
           className="w-44"

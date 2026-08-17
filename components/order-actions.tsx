@@ -1,22 +1,19 @@
 "use client";
 
-import { Eye, Pencil } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { Eye } from "lucide-react";
+import { useState } from "react";
 import { ActionMenu } from "@/components/action-menu";
 import { Modal } from "@/components/modal";
 import { StatusBadge } from "@/components/product-card";
-import { Select } from "@/components/select";
 import { Button, Spinner } from "@/components/ui";
-import { getErrorMessage } from "@/lib/axios";
 import type { Order, OrderStatus } from "@/lib/types";
-import { formatNaira, formatTitle } from "@/lib/utils";
+import { formatNaira } from "@/lib/utils";
 import {
   useGetOrderQuery,
   useTrackFezOrderQuery,
-  useUpdateOrderStatusMutation,
 } from "@/store/api/sell4meApi";
 
+/** Filter values — includes legacy `shipped` for older records. */
 export const ORDER_STATUSES: OrderStatus[] = [
   "pending",
   "confirmed",
@@ -27,7 +24,7 @@ export const ORDER_STATUSES: OrderStatus[] = [
 ];
 
 export function MerchantOrderRowActions({ order }: { order: Order }) {
-  const [mode, setMode] = useState<"view" | "update" | null>(null);
+  const [open, setOpen] = useState(false);
 
   return (
     <>
@@ -38,27 +35,15 @@ export function MerchantOrderRowActions({ order }: { order: Order }) {
             id: "view",
             label: "View",
             icon: <Eye className="size-4" />,
-            onSelect: () => setMode("view"),
-          },
-          {
-            id: "update",
-            label: "Update Status",
-            icon: <Pencil className="size-4" />,
-            onSelect: () => setMode("update"),
+            onSelect: () => setOpen(true),
           },
         ]}
       />
       <OrderViewModal
         order={order}
-        open={mode === "view"}
-        onClose={() => setMode(null)}
-        onUpdate={() => setMode("update")}
+        open={open}
+        onClose={() => setOpen(false)}
         fetchDetails
-      />
-      <OrderStatusModal
-        order={order}
-        open={mode === "update"}
-        onClose={() => setMode(null)}
       />
     </>
   );
@@ -95,7 +80,6 @@ export function OrderViewModal({
   orderId,
   open,
   onClose,
-  onUpdate,
   fetchDetails = false,
   partner = false,
 }: {
@@ -103,7 +87,6 @@ export function OrderViewModal({
   orderId?: string;
   open: boolean;
   onClose: () => void;
-  onUpdate?: () => void;
   fetchDetails?: boolean;
   partner?: boolean;
 }) {
@@ -125,16 +108,9 @@ export function OrderViewModal({
       title={`Order #${(order?.id || id).slice(0, 8)}`}
       description={order?.store_name}
       footer={
-        <>
-          <Button type="button" variant="secondary" onClick={onClose}>
-            Close
-          </Button>
-          {onUpdate ? (
-            <Button type="button" onClick={onUpdate}>
-              Update Status
-            </Button>
-          ) : null}
-        </>
+        <Button type="button" variant="secondary" onClick={onClose}>
+          Close
+        </Button>
       }
     >
       {isFetching || !order ? (
@@ -167,6 +143,13 @@ function OrderDetails({
         ) : null}
       </div>
 
+      {!partner ? (
+        <p className="rounded-lg bg-surface-soft px-3 py-2 text-xs text-muted">
+          Order status updates automatically when payment is confirmed and when
+          Fez delivery events are received.
+        </p>
+      ) : null}
+
       {order.items?.length ? (
         <ul className="divide-y divide-border rounded-xl border border-border">
           {order.items.map((item, idx) => (
@@ -190,6 +173,9 @@ function OrderDetails({
               ? "Locker pickup"
               : "Direct delivery"}
           </p>
+          {order.recipient_name ? (
+            <p className="mt-2 font-medium">{order.recipient_name}</p>
+          ) : null}
           <p className="mt-2 text-muted">
             {order.delivery_method === "locker"
               ? order.locker_address || order.recipient_address || "—"
@@ -204,6 +190,9 @@ function OrderDetails({
           </p>
           {order.recipient_phone ? (
             <p className="mt-2">{order.recipient_phone}</p>
+          ) : null}
+          {order.recipient_email ? (
+            <p className="mt-1 text-muted">{order.recipient_email}</p>
           ) : null}
           {order.tracking_code ? (
             <p className="mt-3 font-mono text-sm tracking-wider text-brand">
@@ -256,68 +245,5 @@ function OrderDetails({
         </pre>
       ) : null}
     </div>
-  );
-}
-
-export function OrderStatusModal({
-  order,
-  open,
-  onClose,
-}: {
-  order: Order;
-  open: boolean;
-  onClose: () => void;
-}) {
-  const [status, setStatus] = useState<OrderStatus>(order.status);
-  const [updateOrderStatus, { isLoading }] = useUpdateOrderStatusMutation();
-
-  useEffect(() => {
-    if (open) setStatus(order.status);
-  }, [open, order.status]);
-
-  return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      title="Update order status"
-      description={`Order #${order.id.slice(0, 8)} · ${order.store_name}`}
-      footer={
-        <>
-          <Button type="button" variant="secondary" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            type="button"
-            disabled={isLoading || status === order.status}
-            onClick={async () => {
-              try {
-                await updateOrderStatus({ id: order.id, status }).unwrap();
-                toast.success("Status updated");
-                onClose();
-              } catch (err) {
-                toast.error(getErrorMessage(err, "Update failed"));
-              }
-            }}
-          >
-            {isLoading ? "Saving…" : "Save status"}
-          </Button>
-        </>
-      }
-    >
-      <div className="flex flex-wrap gap-2">
-        <StatusBadge status={order.status} />
-        <StatusBadge status={order.payment_status} />
-      </div>
-      <div className="mt-4">
-        <Select
-          value={status}
-          onChange={(e) => setStatus(e.target.value as OrderStatus)}
-          options={ORDER_STATUSES.map((item) => ({
-            value: item,
-            label: formatTitle(item),
-          }))}
-        />
-      </div>
-    </Modal>
   );
 }

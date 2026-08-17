@@ -444,6 +444,20 @@ function WalletTransactionsTable({ txs }: { txs: WalletTransaction[] }) {
                 <dd className="mt-1">{viewing.description}</dd>
               </div>
             ) : null}
+            {viewing.transfer_reference ? (
+              <div className="flex justify-between gap-3">
+                <dt className="text-muted">Transfer reference</dt>
+                <dd className="font-mono text-xs">{viewing.transfer_reference}</dd>
+              </div>
+            ) : null}
+            {viewing.bank_code && viewing.account_number ? (
+              <div className="flex justify-between gap-3">
+                <dt className="text-muted">Bank account</dt>
+                <dd className="font-mono text-xs">
+                  {viewing.bank_code} · {viewing.account_number}
+                </dd>
+              </div>
+            ) : null}
             {viewing.status === "pending" && viewing.type === "debit" ? (
               <p className="rounded-lg bg-surface-soft px-3 py-2 text-xs text-muted">
                 Reserved — waiting for bank confirmation

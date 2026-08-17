@@ -62,6 +62,16 @@ export interface User {
   is_active: boolean;
   is_verified: boolean;
   last_login_at?: string;
+  /** Days since last login when inactive 7+ days; null otherwise */
+  inactive_days?: number | null;
+  /** True when account was reactivated after inactivity on login */
+  reactivated?: boolean;
+}
+
+export interface LoginDeviceInfo {
+  device_name: string;
+  location_label: string;
+  is_new_device: boolean;
 }
 
 export interface UserDevice {
@@ -196,7 +206,9 @@ export interface Order {
   delivery_method?: DeliveryMethod;
   locker_id?: string;
   locker_address?: string;
+  recipient_name?: string;
   recipient_phone?: string;
+  recipient_email?: string;
   recipient_address?: string;
   recipient_state?: string;
   city?: string;
@@ -223,6 +235,8 @@ export type WalletTransactionStatus = "pending" | "completed" | "failed";
 
 export interface WalletTransaction {
   id: string;
+  wallet_id?: string;
+  user_id?: string;
   type: "credit" | "debit";
   category: string;
   amount: number;
@@ -234,10 +248,14 @@ export interface WalletTransaction {
   currency: string;
   status: WalletTransactionStatus | string;
   reference: string;
+  transfer_reference?: string;
+  bank_code?: string;
+  account_number?: string;
   order_id?: string;
   description?: string;
   created_at?: string;
   createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface PaymentRecord {
