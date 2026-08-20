@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DashboardShell } from "@/components/dashboard-shell";
-import { MerchantOrderRowActions, ORDER_STATUSES } from "@/components/order-actions";
+import { MerchantOrderRowActions, ORDER_STATUSES, orderStatusLabel } from "@/components/order-actions";
 import { StatusBadge } from "@/components/product-card";
 import { EmptyState } from "@/components/ui";
 import { Select } from "@/components/select";
 import { getErrorMessage } from "@/lib/axios";
-import { formatNaira, formatTitle } from "@/lib/utils";
+import { formatNaira } from "@/lib/utils";
 import { useListOrdersQuery } from "@/store/api/sell4meApi";
 
 export default function MerchantOrdersPage() {
@@ -36,7 +36,7 @@ export default function MerchantOrdersPage() {
           <option value="">All Statuses</option>
           {ORDER_STATUSES.map((item) => (
             <option key={item} value={item}>
-              {formatTitle(item)}
+              {orderStatusLabel(item)}
             </option>
           ))}
         </Select>

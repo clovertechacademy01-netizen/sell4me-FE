@@ -7,7 +7,7 @@ import { Modal } from "@/components/modal";
 import { StatusBadge } from "@/components/product-card";
 import { Button, Spinner } from "@/components/ui";
 import type { Order, OrderStatus } from "@/lib/types";
-import { formatNaira } from "@/lib/utils";
+import { formatNaira, formatTitle } from "@/lib/utils";
 import {
   useGetOrderQuery,
   useTrackFezOrderQuery,
@@ -22,6 +22,12 @@ export const ORDER_STATUSES: OrderStatus[] = [
   "delivered",
   "cancelled",
 ];
+
+export function orderStatusLabel(status: OrderStatus): string {
+  if (status === "processing") return "Processing (In Transit)";
+  if (status === "shipped") return "Shipped (Legacy)";
+  return formatTitle(status);
+}
 
 export function MerchantOrderRowActions({ order }: { order: Order }) {
   const [open, setOpen] = useState(false);
@@ -184,10 +190,7 @@ function OrderDetails({
           {order.locker_id ? (
             <p className="mt-1 text-xs text-muted">Locker ID · {order.locker_id}</p>
           ) : null}
-          <p className="mt-1">
-            {order.city ? `${order.city}, ` : ""}
-            {order.recipient_state}
-          </p>
+          <p className="mt-1">{order.recipient_state || "—"}</p>
           {order.recipient_phone ? (
             <p className="mt-2">{order.recipient_phone}</p>
           ) : null}

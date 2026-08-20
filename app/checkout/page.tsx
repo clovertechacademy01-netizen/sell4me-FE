@@ -157,12 +157,6 @@ export default function CheckoutPage() {
   const deliveryTotal = estimates.length
     ? estimates.reduce((sum, fee) => sum + Number(fee.delivery_fee || 0), 0)
     : null;
-  const fezTotal = estimates.length
-    ? estimates.reduce((sum, fee) => sum + Number(fee.fez_cost || 0), 0)
-    : null;
-  const markupTotal = estimates.length
-    ? estimates.reduce((sum, fee) => sum + Number(fee.markup || 0), 0)
-    : null;
 
   if (!cart) {
     return (
@@ -478,7 +472,7 @@ export default function CheckoutPage() {
               Delivery
               <InfoTip label="Delivery pricing">
                 {methodMeta?.detail ||
-                  "Delivery fee is estimated from Fez cost plus platform markup for each store order."}
+                  "Delivery fee is quoted per store order and includes courier cost plus platform handling."}
               </InfoTip>
             </dt>
             <dd className="text-right">
@@ -492,18 +486,6 @@ export default function CheckoutPage() {
                   : "—"}
             </dd>
           </div>
-          {deliveryTotal !== null && !estimating ? (
-            <>
-              <div className="flex justify-between gap-3 text-xs">
-                <dt className="text-muted">Courier (Fez)</dt>
-                <dd>{formatNaira(fezTotal || 0)}</dd>
-              </div>
-              <div className="flex justify-between gap-3 text-xs">
-                <dt className="text-muted">Platform fee</dt>
-                <dd>{formatNaira(markupTotal || 0)}</dd>
-              </div>
-            </>
-          ) : null}
           {estimates.length > 1 ? (
             <div className="rounded-lg border border-border bg-surface-soft p-3 text-xs text-muted">
               {estimates.length} store deliveries in this checkout

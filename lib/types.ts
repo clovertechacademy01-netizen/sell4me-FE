@@ -19,9 +19,8 @@ export interface DeliveryEstimate {
   recipient_state: string;
   value_of_items: number;
   locker: boolean;
+  /** Fez cost + platform markup — breakdown is not exposed by the API. */
   delivery_fee: number;
-  fez_cost: number;
-  markup: number;
 }
 
 export type OrderStatus =
@@ -211,8 +210,7 @@ export interface Order {
   recipient_email?: string;
   recipient_address?: string;
   recipient_state?: string;
-  city?: string;
-  country?: string;
+  fez_unique_id?: string;
   fez_order_no?: string;
   waybill_number?: string;
   delivery_status?: string;

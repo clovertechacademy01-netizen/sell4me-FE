@@ -341,7 +341,7 @@ function WalletTransactionsTable({ txs }: { txs: WalletTransaction[] }) {
             <tr>
               <th>Transaction</th>
               <th>Status</th>
-              <th>Amount</th>
+              <th>Wallet debit</th>
               <th className="text-right">Actions</th>
             </tr>
           </thead>

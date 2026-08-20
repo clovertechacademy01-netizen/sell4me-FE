@@ -198,7 +198,7 @@ export default function HomePage() {
               },
               {
                 title: "Fez Delivery",
-                body: "Live quote for home delivery or locker pickup, plus a clear platform markup.",
+                body: "Live quote for home delivery or locker pickup at checkout.",
               },
               {
                 title: "Wallet Payouts",
